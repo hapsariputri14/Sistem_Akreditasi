@@ -7,9 +7,9 @@
     <title>@yield('title', 'Dashboard')</title>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('vendor/plugins/fontawesome-free/css/all.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.css') }}">
     <!-- AdminLTE -->
-    <link rel="stylesheet" href="{{ asset('vendor/dist/css/adminlte.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/adminlte/dist/css/adminlte.min.css') }}">
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -35,16 +35,16 @@
     </div>
 
     <!-- jQuery -->
-    <script src="{{ asset('vendor/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
 
     <!-- Bootstrap 4 -->
-    <script src="{{ asset('vendor/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- AdminLTE App -->
-    <script src="{{ asset('vendor/dist/js/adminlte.min.js') }}"></script>
+    <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
 
     <!-- jQuery Validation (CDNJS) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
