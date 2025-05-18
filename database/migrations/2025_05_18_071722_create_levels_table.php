@@ -6,22 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
-        Schema::create('levels', function (Blueprint $table) {
-            $table->id();
+        Schema::create('level', function (Blueprint $table) {
+            $table->id('id_level');
+            $table->string('nama_level', 100);
+            $table->string('kode_level', 20);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('levels');
+        Schema::dropIfExists('level');
     }
 };
