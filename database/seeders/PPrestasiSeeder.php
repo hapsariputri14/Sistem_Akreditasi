@@ -21,7 +21,7 @@ class PPrestasiSeeder extends Seeder
                 'tingkat' => $tingkat[array_rand($tingkat)],
                 'status' => 'tervalidasi',
                 'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => null,
+                'bukti' => 'contoh.pdf',
             ];
 
             $prestasis[] = [
@@ -31,7 +31,7 @@ class PPrestasiSeeder extends Seeder
                 'tingkat' => $tingkat[array_rand($tingkat)],
                 'status' => 'tervalidasi',
                 'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => null,
+                'bukti' => 'contoh.pdf',
             ];
         }
 

@@ -22,7 +22,7 @@ class PSertifikasiSeeder extends Seeder
                 'masa_berlaku' => '5 Tahun',
                 'status' => 'tervalidasi',
                 'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => null,
+                'bukti' => 'contoh.pdf',
             ];
 
             $sertifikasis[] = [
@@ -34,7 +34,7 @@ class PSertifikasiSeeder extends Seeder
                 'masa_berlaku' => '3 Tahun',
                 'status' => 'tervalidasi',
                 'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => null,
+                'bukti' => 'contoh.pdf',
             ];
         }
 

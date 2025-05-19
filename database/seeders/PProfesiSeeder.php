@@ -20,7 +20,7 @@ class PProfesiSeeder extends Seeder
                 'gelar' => 'Sarjana',
                 'status' => 'tervalidasi',
                 'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => null,
+                'bukti' => 'contoh.pdf',
             ];
 
             $profesis[] = [
@@ -30,7 +30,7 @@ class PProfesiSeeder extends Seeder
                 'gelar' => 'Magister',
                 'status' => 'tervalidasi',
                 'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => null,
+                'bukti' => 'contoh.pdf',
             ];
         }
 

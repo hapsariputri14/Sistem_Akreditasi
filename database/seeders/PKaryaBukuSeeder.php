@@ -22,7 +22,7 @@ class PKaryaBukuSeeder extends Seeder
                 'isbn' => 'ISBN-' . (900000 + $i),
                 'status' => 'tervalidasi',
                 'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => null,
+                'bukti' => 'contoh.pdf',
             ];
 
             $karyaBukus[] = [
@@ -34,7 +34,7 @@ class PKaryaBukuSeeder extends Seeder
                 'isbn' => 'ISBN-' . (800000 + $i),
                 'status' => 'tervalidasi',
                 'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => null,
+                'bukti' => 'contoh.pdf',
             ];
         }
 

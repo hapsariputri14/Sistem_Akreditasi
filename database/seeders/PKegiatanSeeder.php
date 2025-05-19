@@ -23,7 +23,7 @@ class PKegiatanSeeder extends Seeder
                 'peran' => $peran[array_rand($peran)],
                 'status' => 'tervalidasi',
                 'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => null,
+                'bukti' => 'contoh.pdf',
             ];
 
             $kegiatans[] = [
@@ -34,7 +34,7 @@ class PKegiatanSeeder extends Seeder
                 'peran' => $peran[array_rand($peran)],
                 'status' => 'tervalidasi',
                 'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => null,
+                'bukti' => 'contoh.pdf',
             ];
         }
 
