@@ -15,7 +15,8 @@ class POrganisasiModel extends Model
         'id_dosen',
         'nama_organisasi',
         'kurun_waktu',
-        'tingkat'
+        'tingkat',
+        'bukti'
     ];
 
     public function dosen()

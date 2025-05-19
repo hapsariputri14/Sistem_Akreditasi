@@ -17,7 +17,8 @@ class PKaryaBukuModel extends Model
         'tahun',
         'jumlah_halaman',
         'penerbit',
-        'isbn'
+        'isbn',
+        'bukti'
     ];
 
     public function dosen()

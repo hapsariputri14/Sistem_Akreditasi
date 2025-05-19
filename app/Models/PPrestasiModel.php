@@ -15,7 +15,8 @@ class PPrestasiModel extends Model
         'id_dosen',
         'prestasi_yang_dicapai',
         'waktu_pencapaian',
-        'tingkat'
+        'tingkat',
+        'bukti'
     ];
 
     protected $casts = [

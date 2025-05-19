@@ -20,6 +20,7 @@ class PSertifikasiSeeder extends Seeder
                 'nama_sertifikasi' => 'Sertifikasi Kompetensi Bidang ' . $i,
                 'nomor_sertifikat' => 'SKB-' . (1000 + $i),
                 'masa_berlaku' => '5 Tahun',
+                'bukti' => null,
             ];
 
             $sertifikasis[] = [
@@ -29,6 +30,7 @@ class PSertifikasiSeeder extends Seeder
                 'nama_sertifikasi' => 'Sertifikasi Keahlian Khusus ' . $i,
                 'nomor_sertifikat' => 'SKK-' . (2000 + $i),
                 'masa_berlaku' => '3 Tahun',
+                'bukti' => null,
             ];
         }
 

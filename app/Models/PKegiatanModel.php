@@ -16,7 +16,8 @@ class PKegiatanModel extends Model
         'jenis_kegiatan',
         'tempat',
         'waktu',
-        'peran'
+        'peran',
+        'bukti'
     ];
 
     protected $casts = [

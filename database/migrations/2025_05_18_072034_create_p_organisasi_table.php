@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('nama_organisasi', 255);
             $table->string('kurun_waktu', 100);
             $table->enum('tingkat', ['Nasional', 'Internasional']);
+            $table->string('bukti')->nullable();
             $table->timestamps();
         });
     }

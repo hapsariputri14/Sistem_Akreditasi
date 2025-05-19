@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('dana', 15, 2);
             $table->enum('peran', ['ketua', 'anggota']);
             $table->boolean('melibatkan_mahasiswa_s2');
+            $table->string('bukti')->nullable();
             $table->timestamps();
         });
     }

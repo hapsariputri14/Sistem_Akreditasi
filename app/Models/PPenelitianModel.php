@@ -18,7 +18,8 @@ class PPenelitianModel extends Model
         'tahun',
         'dana',
         'peran',
-        'melibatkan_mahasiswa_s2'
+        'melibatkan_mahasiswa_s2',
+        'bukti'
     ];
 
     public function dosen()

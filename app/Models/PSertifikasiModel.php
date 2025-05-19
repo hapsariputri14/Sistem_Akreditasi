@@ -17,7 +17,8 @@ class PSertifikasiModel extends Model
         'penerbit',
         'nama_sertifikasi',
         'nomor_sertifikat',
-        'masa_berlaku'
+        'masa_berlaku',
+        'bukti'
     ];
 
     public function dosen()

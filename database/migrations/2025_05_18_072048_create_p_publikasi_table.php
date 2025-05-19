@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('jenis_publikasi', ['jurnal', 'prosiding', 'poster']);
             $table->decimal('dana', 15, 2);
             $table->boolean('melibatkan_mahasiswa_s2');
+            $table->string('bukti')->nullable();
             $table->timestamps();
         });
     }

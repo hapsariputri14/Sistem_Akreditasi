@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('skema', 100);
             $table->string('nomor', 100);
             $table->boolean('melibatkan_mahasiswa_s2');
+            $table->string('bukti')->nullable();
             $table->timestamps();
         });
     }

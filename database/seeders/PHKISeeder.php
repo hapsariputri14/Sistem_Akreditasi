@@ -21,6 +21,7 @@ class PHKISeeder extends Seeder
                 'skema' => $skema[array_rand($skema)],
                 'nomor' => 'HKI-' . (1000 + $i),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
+                'bukti' => null,
             ];
 
             $hkis[] = [
@@ -30,6 +31,7 @@ class PHKISeeder extends Seeder
                 'skema' => $skema[array_rand($skema)],
                 'nomor' => 'HKI-' . (2000 + $i),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
+                'bukti' => null,
             ];
         }
 

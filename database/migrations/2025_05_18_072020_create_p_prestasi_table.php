@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('prestasi_yang_dicapai', 255);
             $table->date('waktu_pencapaian');
             $table->enum('tingkat', ['Lokal', 'Nasional', 'Internasional']);
+            $table->string('bukti')->nullable();
             $table->timestamps();
         });
     }

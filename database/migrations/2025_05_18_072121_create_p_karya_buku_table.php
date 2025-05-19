@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('jumlah_halaman');
             $table->string('penerbit', 100);
             $table->string('isbn', 50);
+            $table->string('bukti')->nullable();
             $table->timestamps();
         });
     }

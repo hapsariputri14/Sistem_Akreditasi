@@ -18,7 +18,8 @@ class PPublikasiModel extends Model
         'tahun_publikasi',
         'jenis_publikasi',
         'dana',
-        'melibatkan_mahasiswa_s2'
+        'melibatkan_mahasiswa_s2',
+        'bukti'
     ];
 
     public function dosen()

@@ -21,6 +21,7 @@ class PKegiatanSeeder extends Seeder
                 'tempat' => 'Universitas ' . $i,
                 'waktu' => date('Y-m-d', strtotime('-' . (10 - $i) . ' months')),
                 'peran' => $peran[array_rand($peran)],
+                'bukti' => null,
             ];
 
             $kegiatans[] = [
@@ -29,6 +30,7 @@ class PKegiatanSeeder extends Seeder
                 'tempat' => 'Kampus ' . ($i + 1),
                 'waktu' => date('Y-m-d', strtotime('-' . (5 - $i) . ' months')),
                 'peran' => $peran[array_rand($peran)],
+                'bukti' => null,
             ];
         }
 

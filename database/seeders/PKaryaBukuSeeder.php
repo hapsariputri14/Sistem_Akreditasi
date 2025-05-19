@@ -20,6 +20,7 @@ class PKaryaBukuSeeder extends Seeder
                 'jumlah_halaman' => rand(100, 300),
                 'penerbit' => 'Penerbit ' . $i,
                 'isbn' => 'ISBN-' . (900000 + $i),
+                'bukti' => null,
             ];
 
             $karyaBukus[] = [
@@ -29,6 +30,7 @@ class PKaryaBukuSeeder extends Seeder
                 'jumlah_halaman' => rand(50, 150),
                 'penerbit' => 'Penerbit ' . ($i + 1),
                 'isbn' => 'ISBN-' . (800000 + $i),
+                'bukti' => null,
             ];
         }
 

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('tempat', 100);
             $table->date('waktu');
             $table->enum('peran', ['penyaji', 'peserta', 'penyaji_dan_peserta']);
+            $table->string('bukti')->nullable();
             $table->timestamps();
         });
     }

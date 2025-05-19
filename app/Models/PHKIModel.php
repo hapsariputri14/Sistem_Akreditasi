@@ -17,7 +17,8 @@ class PHKIModel extends Model
         'tahun',
         'skema',
         'nomor',
-        'melibatkan_mahasiswa_s2'
+        'melibatkan_mahasiswa_s2',
+        'bukti'
     ];
 
     public function dosen()

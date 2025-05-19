@@ -22,6 +22,7 @@ class PPenelitianSeeder extends Seeder
                 'dana' => rand(5000000, 20000000),
                 'peran' => (rand(0, 1) ? 'ketua' : 'anggota'),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
+                'bukti' => null,
             ];
 
             $penelitians[] = [
@@ -32,6 +33,7 @@ class PPenelitianSeeder extends Seeder
                 'dana' => rand(3000000, 15000000),
                 'peran' => (rand(0, 1) ? 'ketua' : 'anggota'),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
+                'bukti' => null,
             ];
         }
 

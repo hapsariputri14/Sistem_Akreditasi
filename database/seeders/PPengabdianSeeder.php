@@ -22,6 +22,7 @@ class PPengabdianSeeder extends Seeder
                 'dana' => rand(3000000, 10000000),
                 'peran' => (rand(0, 1) ? 'ketua' : 'anggota'),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
+                'bukti' => null,
             ];
 
             $pengabdians[] = [
@@ -32,6 +33,7 @@ class PPengabdianSeeder extends Seeder
                 'dana' => rand(2000000, 8000000),
                 'peran' => (rand(0, 1) ? 'ketua' : 'anggota'),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
+                'bukti' => null,
             ];
         }
 

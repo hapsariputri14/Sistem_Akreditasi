@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('perguruan_tinggi', 255);
             $table->string('kurun_waktu', 100);
             $table->string('gelar', 50);
+            $table->string('bukti')->nullable();
             $table->timestamps();
         });
     }

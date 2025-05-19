@@ -15,7 +15,8 @@ class PProfesiModel extends Model
         'id_dosen',
         'perguruan_tinggi',
         'kurun_waktu',
-        'gelar'
+        'gelar',
+        'bukti'
     ];
 
     public function dosen()
