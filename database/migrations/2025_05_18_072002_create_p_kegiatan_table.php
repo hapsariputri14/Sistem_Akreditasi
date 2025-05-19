@@ -15,6 +15,8 @@ return new class extends Migration
             $table->string('tempat', 100);
             $table->date('waktu');
             $table->enum('peran', ['penyaji', 'peserta', 'penyaji_dan_peserta']);
+            $table->enum('status', ['tervalidasi', 'perlu validasi'])->default('tervalidasi');
+            $table->enum('sumber_data', ['p3m', 'dosen'])->default('dosen');
             $table->string('bukti')->nullable();
             $table->timestamps();
         });

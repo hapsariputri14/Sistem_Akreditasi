@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('skema', 100);
             $table->string('nomor', 100);
             $table->boolean('melibatkan_mahasiswa_s2');
+            $table->enum('status', ['tervalidasi', 'perlu validasi'])->default('tervalidasi');
+            $table->enum('sumber_data', ['p3m', 'dosen'])->default('dosen');
             $table->string('bukti')->nullable();
             $table->timestamps();
         });

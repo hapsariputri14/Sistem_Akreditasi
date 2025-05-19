@@ -16,6 +16,8 @@ return new class extends Migration
             $table->integer('jumlah_halaman');
             $table->string('penerbit', 100);
             $table->string('isbn', 50);
+            $table->enum('status', ['tervalidasi', 'perlu validasi'])->default('tervalidasi');
+            $table->enum('sumber_data', ['p3m', 'dosen'])->default('dosen');
             $table->string('bukti')->nullable();
             $table->timestamps();
         });

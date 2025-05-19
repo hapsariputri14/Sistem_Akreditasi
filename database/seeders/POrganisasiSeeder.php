@@ -19,6 +19,8 @@ class POrganisasiSeeder extends Seeder
                 'nama_organisasi' => 'Asosiasi Profesi ' . $i,
                 'kurun_waktu' => (2015 + $i) . '-Sekarang',
                 'tingkat' => $tingkat[array_rand($tingkat)],
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
 
@@ -27,6 +29,8 @@ class POrganisasiSeeder extends Seeder
                 'nama_organisasi' => 'Ikatan Dosen ' . $i,
                 'kurun_waktu' => (2018 + $i) . '-Sekarang',
                 'tingkat' => $tingkat[array_rand($tingkat)],
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
         }

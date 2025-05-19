@@ -20,6 +20,8 @@ class PKaryaBukuSeeder extends Seeder
                 'jumlah_halaman' => rand(100, 300),
                 'penerbit' => 'Penerbit ' . $i,
                 'isbn' => 'ISBN-' . (900000 + $i),
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
 
@@ -30,6 +32,8 @@ class PKaryaBukuSeeder extends Seeder
                 'jumlah_halaman' => rand(50, 150),
                 'penerbit' => 'Penerbit ' . ($i + 1),
                 'isbn' => 'ISBN-' . (800000 + $i),
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
         }

@@ -21,6 +21,8 @@ class PKegiatanSeeder extends Seeder
                 'tempat' => 'Universitas ' . $i,
                 'waktu' => date('Y-m-d', strtotime('-' . (10 - $i) . ' months')),
                 'peran' => $peran[array_rand($peran)],
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
 
@@ -30,6 +32,8 @@ class PKegiatanSeeder extends Seeder
                 'tempat' => 'Kampus ' . ($i + 1),
                 'waktu' => date('Y-m-d', strtotime('-' . (5 - $i) . ' months')),
                 'peran' => $peran[array_rand($peran)],
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
         }

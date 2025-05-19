@@ -20,6 +20,8 @@ class PSertifikasiSeeder extends Seeder
                 'nama_sertifikasi' => 'Sertifikasi Kompetensi Bidang ' . $i,
                 'nomor_sertifikat' => 'SKB-' . (1000 + $i),
                 'masa_berlaku' => '5 Tahun',
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
 
@@ -30,6 +32,8 @@ class PSertifikasiSeeder extends Seeder
                 'nama_sertifikasi' => 'Sertifikasi Keahlian Khusus ' . $i,
                 'nomor_sertifikat' => 'SKK-' . (2000 + $i),
                 'masa_berlaku' => '3 Tahun',
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
         }

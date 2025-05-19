@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('prestasi_yang_dicapai', 255);
             $table->date('waktu_pencapaian');
             $table->enum('tingkat', ['Lokal', 'Nasional', 'Internasional']);
+            $table->enum('status', ['tervalidasi', 'perlu validasi'])->default('tervalidasi');
+            $table->enum('sumber_data', ['p3m', 'dosen'])->default('dosen');
             $table->string('bukti')->nullable();
             $table->timestamps();
         });

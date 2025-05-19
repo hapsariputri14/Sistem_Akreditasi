@@ -19,6 +19,8 @@ class PPrestasiSeeder extends Seeder
                 'prestasi_yang_dicapai' => 'Penghargaan Dosen Berprestasi ' . $i,
                 'waktu_pencapaian' => date('Y-m-d', strtotime('-' . (12 - $i) . ' months')),
                 'tingkat' => $tingkat[array_rand($tingkat)],
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
 
@@ -27,6 +29,8 @@ class PPrestasiSeeder extends Seeder
                 'prestasi_yang_dicapai' => 'Juara ' . $i . ' Lomba Inovasi Pembelajaran',
                 'waktu_pencapaian' => date('Y-m-d', strtotime('-' . (6 - $i) . ' months')),
                 'tingkat' => $tingkat[array_rand($tingkat)],
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
         }

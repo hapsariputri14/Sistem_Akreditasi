@@ -22,6 +22,8 @@ class PPublikasiSeeder extends Seeder
                 'jenis_publikasi' => $jenis_publikasi[array_rand($jenis_publikasi)],
                 'dana' => rand(1000000, 5000000),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
 
@@ -33,6 +35,8 @@ class PPublikasiSeeder extends Seeder
                 'jenis_publikasi' => $jenis_publikasi[array_rand($jenis_publikasi)],
                 'dana' => rand(500000, 3000000),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
+                'status' => 'tervalidasi',
+                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
                 'bukti' => null,
             ];
         }

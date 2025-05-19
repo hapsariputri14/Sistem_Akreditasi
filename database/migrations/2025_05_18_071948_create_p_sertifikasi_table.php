@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('nama_sertifikasi', 255);
             $table->string('nomor_sertifikat', 100);
             $table->string('masa_berlaku', 50);
+            $table->enum('status', ['tervalidasi', 'perlu validasi'])->default('tervalidasi');
+            $table->enum('sumber_data', ['p3m', 'dosen'])->default('dosen');
             $table->string('bukti')->nullable();
             $table->timestamps();
         });
