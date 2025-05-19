@@ -23,14 +23,28 @@ class UserModel extends Authenticatable
         'id_level'
     ];
 
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password'];
+
+    protected $cast = ['password' => 'hashed'];
 
     public function level()
     {
         return $this->belongsTo(LevelModel::class, 'id_level');
+    }
+
+    public function hasRoleName() : string
+    {
+        return $this->level->kode_level;
+    }
+
+    public function hasRole($role) : bool
+    {
+        return $this->level->kode_level === $role;
+    }
+
+    public function getRole()
+    {
+        return $this->level->kode_level;
     }
 
     public function dokumenKriteria()
