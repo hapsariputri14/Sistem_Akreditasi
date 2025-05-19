@@ -19,9 +19,14 @@
             <small class="text-muted">Format: .xlsx (Excel)</small>
         </div>
 
-        <div class="mb-3">
-            <label for="file_barang" class="form-label">Pilih File Excel</label>
-            <input type="file" class="form-control" id="file_level" name="file_level" required accept=".xlsx,.xls">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label for="file_level" class="btn btn-danger">Choose File</label>
+            </div>
+            <input type="file" class="form-control d-none" id="file_level" name="file_level" required
+                accept=".xlsx,.xls"
+                onchange="document.getElementById('file_level_text').value = this.files[0]?.name || 'No file chosen'">
+            <input type="text" class="form-control" id="file_level_text" placeholder="No file chosen" readonly>
             <div id="error-file_level" class="invalid-feedback"></div>
         </div>
     </div>
@@ -34,4 +39,3 @@
         </button>
     </div>
 </form>
-

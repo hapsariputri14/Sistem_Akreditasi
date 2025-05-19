@@ -71,7 +71,7 @@ class LevelDataTable extends DataTable
             ->setTableId('level-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->dom('Bfrtip')
+            ->dom('Blfrtip')
             ->orderBy(1)
             ->selectStyleSingle()
             ->buttons([
