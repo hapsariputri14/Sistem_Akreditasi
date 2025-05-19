@@ -25,7 +25,6 @@ class PSertifikasiController extends Controller
         return view('p_sertifikasi.create_ajax', compact('dosens'));
     }
 
-
     public function store_ajax(Request $request)
     {
         if ($request->ajax() || $request->wantsJson()) {
@@ -225,4 +224,27 @@ class PSertifikasiController extends Controller
         $sertifikasi = PSertifikasiModel::with('dosen')->findOrFail($id);
         return view('p_sertifikasi.detail_ajax', compact('sertifikasi'));
     }
+
+    public function validasi_ajax(Request $request, $id)
+    {
+        $sertifikasi = PSertifikasiModel::findOrFail($id);
+
+        if ($request->isMethod('post')) {
+            $request->validate([
+                'status' => 'required|in:Tervalidasi,Tidak Valid',
+            ]);
+
+            $sertifikasi->status = $request->input('status');
+            $sertifikasi->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Status berhasil diperbarui',
+            ]);
+        }
+
+        return view('p_sertifikasi.validasi_ajax', compact('sertifikasi'));
+    }
+
+    
 }

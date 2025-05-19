@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}/delete_ajax', [PSertifikasiController::class, 'delete_ajax'])->name('delete_ajax');
         Route::get('/{id}/detail_ajax', [PSertifikasiController::class, 'detail_ajax'])->name('detail_ajax');
         Route::get('/validasi_ajax/{id}', [PSertifikasiController::class, 'validasi_ajax'])->name('validasi_ajax');
+        Route::post('/validasi_ajax/{id}', [PSertifikasiController::class, 'validasi_ajax'])->name('validasi_update');
 
         // Import and Export routes
         Route::get('/import', [LevelController::class, 'import'])->name('import');

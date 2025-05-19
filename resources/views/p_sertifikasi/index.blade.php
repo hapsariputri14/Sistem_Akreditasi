@@ -20,6 +20,15 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0">Manajemen Sertifikasi</h2>
             <div>
+                <a class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_pdf') }}">
+                    <i class="fa-solid fa-file-pdf"></i> Export Data - PDF
+                </a>
+                <a class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_excel') }}">
+                    <i class="fas fa-file-excel"></i> Export Data - Excel
+                </a>
+                <button class="btn btn-primary me-2" onclick="modalAction('{{ route('p_sertifikasi.import') }}')">
+                    <i class="fa-solid fa-file-arrow-up"></i> Import Data
+                </button>
                 <button onclick="modalAction('{{ route('p_sertifikasi.create_ajax') }}')" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Tambah Data
                 </button>
@@ -31,19 +40,21 @@
             <div class="card-header bg-primary text-white">
                 <h3 class="card-title mb-0">Daftar Sertifikasi</h3>
             </div>
+
+
             <div class="card-body">
                 <div class="row mb-3">
-                    <div class="col-6 d-flex flex-column align-items-start">
-                        <label for="filterSumberData" class="form-label mb-1">Filter Sumber Data:</label>
-                        <select id="filterSumberData" class="form-select w-100">
+                    <div class="col-6 form-group">
+                        <label for="filterSumberData">Filter Sumber Data:</label>
+                        <select id="filterSumberData" class="form-control select2" style="width: 100%;" required>
                             <option value="">-- Filter Sumber Data --</option>
                             <option value="p3m">P3M</option>
                             <option value="dosen">Dosen</option>
                         </select>
                     </div>
-                    <div class="col-6 d-flex flex-column align-items-start">
-                        <label for="filterStatus" class="form-label mb-1">Filter Status:</label>
-                        <select id="filterStatus" class="form-select w-100">
+                    <div class="col-6 form-group">
+                        <label for="filterStatus">Filter Status:</label>
+                        <select id="filterStatus" class="form-control select2" style="width: 100%;" required>
                             <option value="">-- Filter Status --</option>
                             <option value="tervalidasi">Tervalidasi</option>
                             <option value="perlu validasi">Perlu Validasi</option>
@@ -145,6 +156,67 @@
                                         Swal.fire('Error!', 'Gagal menyimpan data.', 'error');
                                     }
                                 }
+                            }
+                        });
+                    });
+
+                    $(document).off('submit', '#form-import');
+
+                    // Handle import form submit
+                    $(document).on('submit', '#form-import', function(e) {
+                        e.preventDefault();
+                        var form = $(this);
+                        var formData = new FormData(form[0]);
+                        var submitBtn = form.find('button[type="submit"]');
+
+                        submitBtn.prop('disabled', true).html(
+                            '<i class="fas fa-spinner fa-spin me-1"></i> Memproses...');
+
+                        $.ajax({
+                            url: form.attr('action'),
+                            method: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                $('#myModal').modal('hide');
+                                if (response.alert && response.message) {
+                                    Swal.fire({
+                                        icon: response.alert,
+                                        title: response.alert === 'success' ? 'Sukses' :
+                                            'Error',
+                                        text: response.message,
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    }).then(() => {
+                                        window.LaravelDataTables["p_sertifikasi-table"].ajax
+                                            .reload();
+                                    });
+                                }
+                            },
+                            error: function(xhr) {
+                                $('#myModal').modal('hide');
+                                if (xhr.responseJSON && xhr.responseJSON.alert && xhr.responseJSON
+                                    .message) {
+                                    Swal.fire({
+                                        icon: xhr.responseJSON.alert,
+                                        title: xhr.responseJSON.alert === 'success' ?
+                                            'Sukses' : 'Error',
+                                        text: xhr.responseJSON.message,
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: xhr.responseJSON.message
+                                    });
+                                }
+                            },
+                            complete: function() {
+                                submitBtn.prop('disabled', false).html(
+                                    '<i class="fas fa-upload me-1"></i> Upload');
                             }
                         });
                     });
