@@ -7,7 +7,7 @@
         <tbody>
             <tr>
                 <th>Nama Dosen</th>
-                <td>{{ $sertifikasi->dosen->nama_dosen ?? '-' }}</td>
+                <td>{{ $sertifikasi->dosen->nama_lengkap ?? '-' }}</td>
             </tr>
             <tr>
                 <th>Tahun Diperoleh</th>
@@ -41,15 +41,25 @@
                 <th>Bukti</th>
                 <td>
                     @if ($sertifikasi->bukti)
-                        <a href="{{ asset('storage/p_sertifikasi' . $sertifikasi->bukti) }}" target="_blank">Lihat File</a>
+                        <a href="{{ asset('storage/p_sertifikasi/' . $sertifikasi->bukti) }}" target="_blank">Lihat File</a>
                     @else
                         Tidak ada file
                     @endif
                 </td>
             </tr>
+            <tr>
+                <th>Dibuat Pada</th>
+                <td>{{ $sertifikasi->created_at ? $sertifikasi->created_at->format('d M Y H:i:s') : '-' }}</td>
+            </tr>
+            <tr>
+                <th>Diubah Pada</th>
+                <td>{{ $sertifikasi->updated_at ? $sertifikasi->updated_at->format('d M Y H:i:s') : '-' }}</td>
+            </tr>
+
         </tbody>
     </table>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
 </div>
+

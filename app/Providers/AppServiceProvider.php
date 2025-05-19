@@ -30,9 +30,10 @@ class AppServiceProvider extends ServiceProvider
         date_default_timezone_set(config('app.timezone'));
 
         View::composer('*', function ($view) {
-        /** @var \App\Models\UserModel|null $user */
-        $user = Auth::user();
-        $view->with('userRole', $user?->getRole());
-    });
+            /** @var UserModel|null $user */
+            $user = Auth::user();
+            $view->with('userRole', $user?->getRole());
+            $view->with('userHasRole', fn($role) => $user ? $user->hasRole($role) : false);
+        });
     }
 }

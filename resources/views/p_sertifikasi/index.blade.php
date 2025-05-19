@@ -27,11 +27,31 @@
         </div>
 
         {{-- DataTable --}}
-        <div class="card">
+        <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
                 <h3 class="card-title mb-0">Daftar Sertifikasi</h3>
             </div>
             <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-6 d-flex flex-column align-items-start">
+                        <label for="filterSumberData" class="form-label mb-1">Filter Sumber Data:</label>
+                        <select id="filterSumberData" class="form-select w-100">
+                            <option value="">-- Filter Sumber Data --</option>
+                            <option value="p3m">P3M</option>
+                            <option value="dosen">Dosen</option>
+                        </select>
+                    </div>
+                    <div class="col-6 d-flex flex-column align-items-start">
+                        <label for="filterStatus" class="form-label mb-1">Filter Status:</label>
+                        <select id="filterStatus" class="form-select w-100">
+                            <option value="">-- Filter Status --</option>
+                            <option value="tervalidasi">Tervalidasi</option>
+                            <option value="perlu validasi">Perlu Validasi</option>
+                            <option value="tidak valid">Tidak Valid</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
                     {{ $dataTable->table([
                         'id' => 'p_sertifikasi-table',
@@ -41,6 +61,7 @@
                 </div>
             </div>
         </div>
+
 
         {{-- Modal --}}
         <div id="myModal" class="modal fade" tabindex="-1" aria-hidden="true">
@@ -91,10 +112,12 @@
                             error: function(xhr) {
                                 $('#myModal').modal('hide');
                                 window.LaravelDataTables["p_sertifikasi-table"].ajax.reload();
-                                if (xhr.responseJSON && xhr.responseJSON.alert && xhr.responseJSON.message) {
+                                if (xhr.responseJSON && xhr.responseJSON.alert && xhr.responseJSON
+                                    .message) {
                                     Swal.fire({
                                         icon: xhr.responseJSON.alert,
-                                        title: xhr.responseJSON.alert === 'success' ? 'Sukses' : 'Error',
+                                        title: xhr.responseJSON.alert === 'success' ?
+                                            'Sukses' : 'Error',
                                         text: xhr.responseJSON.message,
                                         timer: 2000,
                                         showConfirmButton: false
@@ -137,6 +160,18 @@
                     });
                 }
             });
+        });
+
+        $(document).ready(function() {
+            $('#filterStatus, #filterSumberData').change(function() {
+                window.LaravelDataTables["p_sertifikasi-table"].draw();
+            });
+        });
+
+        // Kirim parameter filter ke server saat DataTable ajax request
+        $('#p_sertifikasi-table').on('preXhr.dt', function(e, settings, data) {
+            data.filter_status = $('#filterStatus').val();
+            data.filter_sumber = $('#filterSumberData').val();
         });
     </script>
 @endpush

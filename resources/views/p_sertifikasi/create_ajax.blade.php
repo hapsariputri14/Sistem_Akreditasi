@@ -6,16 +6,6 @@
     </div>
     <div class="modal-body">
         <div class="mb-3">
-            <label for="id_dosen" class="form-label">Nama Dosen</label>
-            <select class="form-select" id="id_dosen" name="id_dosen" required>
-                <option value="">-- Pilih Dosen --</option>
-                @foreach ($dosens as $dosen)
-                    <option value="{{ $dosen->id_dosen }}">{{ $dosen->nama_dosen }}</option>
-                @endforeach
-            </select>
-            <div class="invalid-feedback" id="error_id_dosen"></div>
-        </div>
-        <div class="mb-3">
             <label for="tahun_diperoleh" class="form-label">Tahun Diperoleh</label>
             <input type="number" class="form-control" id="tahun_diperoleh" name="tahun_diperoleh" required>
             <div class="invalid-feedback" id="error_tahun_diperoleh"></div>
@@ -39,16 +29,6 @@
             <label for="masa_berlaku" class="form-label">Masa Berlaku</label>
             <input type="date" class="form-control" id="masa_berlaku" name="masa_berlaku">
             <div class="invalid-feedback" id="error_masa_berlaku"></div>
-        </div>
-        <div class="mb-3">
-            <label for="status" class="form-label">Status</label>
-            <input type="text" class="form-control" id="status" name="status" required>
-            <div class="invalid-feedback" id="error_status"></div>
-        </div>
-        <div class="mb-3">
-            <label for="sumber_data" class="form-label">Sumber Data</label>
-            <input type="text" class="form-control" id="sumber_data" name="sumber_data" required>
-            <div class="invalid-feedback" id="error_sumber_data"></div>
         </div>
         <div class="mb-3">
             <label for="bukti" class="form-label">Bukti (PDF, JPG, PNG)</label>

@@ -30,7 +30,7 @@ class PSertifikasiModel extends Model
 
     public function dosen()
     {
-        return $this->belongsTo(DosenModel::class, 'id_dosen');
+        return $this->belongsTo(DosenModel::class, 'id_dosen', 'id_dosen');
     }
 
     // Scope for filtering by data source
