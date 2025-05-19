@@ -63,9 +63,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/validasi_ajax/{id}', [PSertifikasiController::class, 'validasi_ajax'])->name('validasi_update');
 
         // Import and Export routes
-        Route::get('/import', [LevelController::class, 'import'])->name('import');
-        Route::post('/import_ajax', [LevelController::class, 'import_ajax'])->name('import_ajax');
-        Route::get('/export_excel', [LevelController::class, 'export_excel'])->name('export_excel');
-        Route::get('/export_pdf', [LevelController::class, 'export_pdf'])->name('export_pdf');
+        Route::get('/import', [PSertifikasiController::class, 'import'])->name('import');
+        Route::post('/import_ajax', [PSertifikasiController::class, 'import_ajax'])->name('import_ajax');
+        Route::get('/export_excel', [PSertifikasiController::class, 'export_excel'])->name('export_excel');
+        Route::get('/export_pdf', [PSertifikasiController::class, 'export_pdf'])->name('export_pdf');
     });
 });

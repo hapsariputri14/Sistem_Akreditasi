@@ -20,7 +20,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0">Manajemen Sertifikasi</h2>
             <div>
-                <a class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_pdf') }}">
+                <a id="exportPdfBtn" class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_pdf') }}">
                     <i class="fa-solid fa-file-pdf"></i> Export Data - PDF
                 </a>
                 <a class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_excel') }}">
@@ -264,6 +264,28 @@
         $('#p_sertifikasi-table').on('preXhr.dt', function(e, settings, data) {
             data.filter_status = $('#filterStatus').val();
             data.filter_sumber = $('#filterSumberData').val();
+        });
+    </script>
+    <script>
+        // Update export PDF link with current filter values
+        function updateExportPdfLink() {
+            var status = $('#filterStatus').val();
+            var sumber = $('#filterSumberData').val();
+            var url = new URL("{{ route('p_sertifikasi.export_pdf') }}", window.location.origin);
+            if (status) {
+                url.searchParams.set('filter_status', status);
+            }
+            if (sumber) {
+                url.searchParams.set('filter_sumber', sumber);
+            }
+            $('#exportPdfBtn').attr('href', url.toString());
+        }
+
+        $(document).ready(function() {
+            updateExportPdfLink();
+            $('#filterStatus, #filterSumberData').change(function() {
+                updateExportPdfLink();
+            });
         });
     </script>
 @endpush
