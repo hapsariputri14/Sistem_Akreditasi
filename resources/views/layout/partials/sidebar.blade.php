@@ -53,7 +53,7 @@
                 <li class="nav-header">Portofolio Dosen</li>
 
                 <li class="nav-item">
-                    <a href="{{ url('/sertifikasi') }}" class="nav-link {{ request()->is('sertifikasi') ? 'active' : '' }}">
+                    <a href="{{ url('/p_sertifikasi') }}" class="nav-link {{ request()->is('p_sertifikasi') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-certificate"></i>
                         <p>Sertifikasi</p>
                     </a>
