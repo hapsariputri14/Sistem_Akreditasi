@@ -21,16 +21,16 @@
             <h2 class="mb-0">Manajemen Level</h2>
             <div>
                 <a class="btn btn-primary me-2" href="{{ route('level.export_pdf') }}">
-                    <i class="fa-solid fa-file-pdf"></i> Export Level - PDF
+                    <i class="fa-solid fa-file-pdf"></i> Export Data - PDF
                 </a>
                 <a class="btn btn-primary me-2" href="{{ route('level.export_excel') }}">
-                    <i class="fas fa-file-excel"></i> Export Level - Excel
+                    <i class="fas fa-file-excel"></i> Export Data - Excel
                 </a>
                 <button class="btn btn-primary me-2" onclick="modalAction('{{ route('level.import') }}')">
-                    <i class="fa-solid fa-file-arrow-up"></i> Import Level
+                    <i class="fa-solid fa-file-arrow-up"></i> Import Data
                 </button>
                 <button onclick="modalAction('{{ route('level.create_ajax') }}')" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Tambah Level
+                    <i class="fas fa-plus me-2"></i>Tambah Data
                 </button>
             </div>
         </div>
