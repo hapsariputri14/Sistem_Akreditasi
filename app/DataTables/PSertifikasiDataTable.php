@@ -22,8 +22,8 @@ class PSertifikasiDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('action', 'psertifikasi.action')
-            ->setRowId('id');
+            ->addColumn('aksi', 'psertifikasi.aksi')
+            ->setRowId('id_sertifikasi');
     }
 
     /**
@@ -31,7 +31,9 @@ class PSertifikasiDataTable extends DataTable
      */
     public function query(PSertifikasiModel $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->newQuery()
+            ->select('p_sertifikasi.*', 'dosen.nama_lengkap as dosen_name')
+            ->leftJoin('dosen', 'p_sertifikasi.id_dosen', '=', 'dosen.id_dosen');
     }
 
     /**
@@ -40,7 +42,7 @@ class PSertifikasiDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-                    ->setTableId('psertifikasi-table')
+                    ->setTableId('p_sertifikasi-table')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     //->dom('Bfrtip')
@@ -62,15 +64,22 @@ class PSertifikasiDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::computed('action')
+            Column::make('id_sertifikasi')->title('ID'),
+            Column::make('dosen_name')->title('Nama Dosen'),
+            Column::make('tahun_diperoleh')->title('Tahun Diperoleh'),
+            Column::make('penerbit')->title('Penerbit'),
+            Column::make('nama_sertifikasi')->title('Nama Sertifikasi'),
+            Column::make('nomor_sertifikat')->title('Nomor Sertifikat'),
+            Column::make('masa_berlaku')->title('Masa Berlaku'),
+            Column::make('status')->title('Status'),
+            Column::make('sumber_data')->title('Sumber Data'),
+            Column::make('created_at')->title('Created At'),
+            Column::make('updated_at')->title('Updated At'),
+            Column::computed('aksi')
                   ->exportable(false)
                   ->printable(false)
                   ->width(60)
                   ->addClass('text-center'),
-            Column::make('id'),
-            Column::make('add your columns'),
-            Column::make('created_at'),
-            Column::make('updated_at'),
         ];
     }
 
