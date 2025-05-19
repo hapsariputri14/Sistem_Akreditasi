@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LevelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +19,22 @@ Route::get('/', function () {
     return view('home');
 });
 
+
+Route::prefix('manage-level')->group(function () {
+    Route::get('/', [LevelController::class, 'index'])->name('level.index');
+
+    // CRUD routes
+    Route::get('/create_ajax', [LevelController::class, 'create_ajax'])->name('level.create_ajax');
+    Route::post('/store_ajax', [LevelController::class, 'store_ajax'])->name('level.store_ajax');
+    Route::get('/{id}/edit_ajax', [LevelController::class, 'edit_ajax'])->name('level.edit_ajax');
+    Route::put('/{id}/update_ajax', [LevelController::class, 'update_ajax'])->name('level.update_ajax');
+    Route::get('/{id}/delete_ajax', [LevelController::class, 'confirm_ajax'])->name('level.confirm_ajax');
+    Route::delete('/{id}/delete_ajax', [LevelController::class, 'delete_ajax'])->name('level.delete_ajax');
+    Route::get('/{id}/detail_ajax', [LevelController::class, 'detail_ajax'])->name('level.detail_ajax');
+
+    // Import and Export routes
+    Route::get('/import', [LevelController::class, 'import'])->name('level.import');
+    Route::post('/import_ajax', [LevelController::class, 'import_ajax'])->name('level.import_ajax');
+    Route::get('/export_excel', [LevelController::class, 'export_excel'])->name('level.export_excel');
+    Route::get('/export_pdf', [LevelController::class, 'export_pdf'])->name('level.export_pdf');
+});
