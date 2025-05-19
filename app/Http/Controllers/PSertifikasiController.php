@@ -289,7 +289,7 @@ class PSertifikasiController extends Controller
                     'nomor_sertifikat' => $values['E'],
                     'masa_berlaku' => $values['F'],
                 ], [
-                    'id_dosen' => 'required|integer|exists:dosen,id',
+                    'id_dosen' => 'required|integer|exists:dosen,id_dosen',
                     'tahun_diperoleh' => 'required|integer|min:1900|max:' . (date('Y') + 5),
                     'penerbit' => 'required|string|max:255',
                     'nama_sertifikasi' => 'required|string|max:255',
@@ -346,6 +346,7 @@ class PSertifikasiController extends Controller
 
             return response()->json($response, 200, ['Content-Type' => 'application/json']);
         } catch (\Exception $e) {
+            Log::error('Import error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
             return response()->json([
                 'status' => false,
                 'alert' => 'error',
@@ -358,7 +359,7 @@ class PSertifikasiController extends Controller
     public function export_excel()
     {
         // Join dengan tabel dosen untuk mendapatkan nama lengkap
-        $sertifikasi = PSertifikasiModel::join('dosen', 'p_sertifikasi.id_dosen', '=', 'dosen.id_dosen')
+        $query = PSertifikasiModel::join('dosen', 'p_sertifikasi.id_dosen', '=', 'dosen.id_dosen')
             ->select(
                 'p_sertifikasi.id_sertifikasi',
                 'dosen.nama_lengkap as nama_dosen',
@@ -371,9 +372,17 @@ class PSertifikasiController extends Controller
                 'p_sertifikasi.sumber_data',
                 'p_sertifikasi.created_at',
                 'p_sertifikasi.updated_at'
-            )
-            ->orderBy('p_sertifikasi.id_sertifikasi')
-            ->get();
+            );
+
+        if ($status = request('filter_status')) {
+            $query->where('p_sertifikasi.status', $status);
+        }
+
+        if ($sumber = request('filter_sumber')) {
+            $query->where('p_sertifikasi.sumber_data', $sumber);
+        }
+
+        $sertifikasi = $query->orderBy('p_sertifikasi.id_sertifikasi')->get();
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();

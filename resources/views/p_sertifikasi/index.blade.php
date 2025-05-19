@@ -23,7 +23,7 @@
                 <a id="exportPdfBtn" class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_pdf') }}">
                     <i class="fa-solid fa-file-pdf"></i> Export Data - PDF
                 </a>
-                <a class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_excel') }}">
+                <a id="exportExcelBtn" class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_excel') }}">
                     <i class="fas fa-file-excel"></i> Export Data - Excel
                 </a>
                 <button class="btn btn-primary me-2" onclick="modalAction('{{ route('p_sertifikasi.import') }}')">
@@ -183,8 +183,8 @@
                                 if (response.alert && response.message) {
                                     Swal.fire({
                                         icon: response.alert,
-                                        title: response.alert === 'success' ? 'Sukses' :
-                                            'Error',
+                                        title: response.alert === 'success' ?
+                                            'Sukses' : 'Error',
                                         text: response.message,
                                         timer: 2000,
                                         showConfirmButton: false
@@ -265,8 +265,7 @@
             data.filter_status = $('#filterStatus').val();
             data.filter_sumber = $('#filterSumberData').val();
         });
-    </script>
-    <script>
+
         // Update export PDF link with current filter values
         function updateExportPdfLink() {
             var status = $('#filterStatus').val();
@@ -281,10 +280,26 @@
             $('#exportPdfBtn').attr('href', url.toString());
         }
 
+        // Update export Excel link with current filter values
+        function updateExportExcelLink() {
+            var status = $('#filterStatus').val();
+            var sumber = $('#filterSumberData').val();
+            var url = new URL("{{ route('p_sertifikasi.export_excel') }}", window.location.origin);
+            if (status) {
+                url.searchParams.set('filter_status', status);
+            }
+            if (sumber) {
+                url.searchParams.set('filter_sumber', sumber);
+            }
+            $('#exportExcelBtn').attr('href', url.toString());
+        }
+
         $(document).ready(function() {
             updateExportPdfLink();
+            updateExportExcelLink();
             $('#filterStatus, #filterSumberData').change(function() {
                 updateExportPdfLink();
+                updateExportExcelLink();
             });
         });
     </script>
