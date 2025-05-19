@@ -93,6 +93,9 @@
                             url: form.attr('action'),
                             method: form.find('input[name="_method"]').val() || form.attr('method'),
                             data: form.serialize(),
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
                             success: function(res) {
                                 $('#myModal').modal(
                                     'hide'); // Cara Bootstrap 4 untuk menyembunyikan modal

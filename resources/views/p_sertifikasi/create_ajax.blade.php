@@ -27,7 +27,7 @@
         </div>
         <div class="mb-3">
             <label for="masa_berlaku" class="form-label">Masa Berlaku</label>
-            <input type="date" class="form-control" id="masa_berlaku" name="masa_berlaku">
+            <input type="text" class="form-control" id="masa_berlaku" name="masa_berlaku">
             <div class="invalid-feedback" id="error_masa_berlaku"></div>
         </div>
         <div class="mb-3">

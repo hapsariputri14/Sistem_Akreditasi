@@ -89,13 +89,22 @@
                         e.preventDefault();
                         var form = $(this);
                         var formData = new FormData(form[0]);
-
+                        // Always use POST method for AJAX to handle file uploads and method spoofing
+                        var method = 'POST';
+                        // Append _method field if present in the form
+                        var methodInput = form.find('input[name="_method"]');
+                        if (methodInput.length) {
+                            formData.append('_method', methodInput.val());
+                        }
                         $.ajax({
                             url: form.attr('action'),
-                            method: form.find('input[name="_method"]').val() || form.attr('method'),
+                            method: method,
                             data: formData,
                             processData: false,
                             contentType: false,
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
                             success: function(res) {
                                 $('#myModal').modal('hide');
                                 window.LaravelDataTables["p_sertifikasi-table"].ajax.reload();
@@ -110,20 +119,31 @@
                                 }
                             },
                             error: function(xhr) {
-                                $('#myModal').modal('hide');
-                                window.LaravelDataTables["p_sertifikasi-table"].ajax.reload();
-                                if (xhr.responseJSON && xhr.responseJSON.alert && xhr.responseJSON
-                                    .message) {
-                                    Swal.fire({
-                                        icon: xhr.responseJSON.alert,
-                                        title: xhr.responseJSON.alert === 'success' ?
-                                            'Sukses' : 'Error',
-                                        text: xhr.responseJSON.message,
-                                        timer: 2000,
-                                        showConfirmButton: false
+                                if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON
+                                    .msgField) {
+                                    // Validation error
+                                    var errors = xhr.responseJSON.msgField;
+                                    $.each(errors, function(field, messages) {
+                                        var input = form.find('[name="' + field + '"]');
+                                        input.addClass('is-invalid');
+                                        input.next('.invalid-feedback').text(messages[0]);
                                     });
                                 } else {
-                                    Swal.fire('Error!', 'Gagal menyimpan data.', 'error');
+                                    $('#myModal').modal('hide');
+                                    window.LaravelDataTables["p_sertifikasi-table"].ajax.reload();
+                                    if (xhr.responseJSON && xhr.responseJSON.alert && xhr
+                                        .responseJSON.message) {
+                                        Swal.fire({
+                                            icon: xhr.responseJSON.alert,
+                                            title: xhr.responseJSON.alert === 'success' ?
+                                                'Sukses' : 'Error',
+                                            text: xhr.responseJSON.message,
+                                            timer: 2000,
+                                            showConfirmButton: false
+                                        });
+                                    } else {
+                                        Swal.fire('Error!', 'Gagal menyimpan data.', 'error');
+                                    }
                                 }
                             }
                         });

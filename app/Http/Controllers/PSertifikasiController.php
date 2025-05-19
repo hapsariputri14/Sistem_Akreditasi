@@ -34,7 +34,7 @@ class PSertifikasiController extends Controller
                 'penerbit' => 'required|string|max:255',
                 'nama_sertifikasi' => 'required|string|max:255',
                 'nomor_sertifikat' => 'required|string|max:255',
-                'masa_berlaku' => 'required|date',
+                'masa_berlaku' => 'required|string|max:50',
                 'bukti' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ];
 
@@ -119,20 +119,18 @@ class PSertifikasiController extends Controller
     public function edit_ajax($id)
     {
         $sertifikasi = PSertifikasiModel::findOrFail($id);
-        $dosens = DosenModel::all();
-        return view('p_sertifikasi.edit_ajax', compact('sertifikasi', 'dosens'));
+        return view('p_sertifikasi.edit_ajax', compact('sertifikasi'));
     }
 
     public function update_ajax(Request $request, $id)
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'id_dosen' => 'required|exists:dosen,id_dosen',
                 'tahun_diperoleh' => 'required|integer',
                 'penerbit' => 'required|string|max:255',
                 'nama_sertifikasi' => 'required|string|max:255',
                 'nomor_sertifikat' => 'required|string|max:255',
-                'masa_berlaku' => 'required|date',
+                'masa_berlaku' => 'required|string|max:50',
                 'bukti' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ];
 
@@ -151,12 +149,12 @@ class PSertifikasiController extends Controller
 
             try {
                 $data = $request->only([
-                    'id_dosen',
                     'tahun_diperoleh',
                     'penerbit',
                     'nama_sertifikasi',
                     'nomor_sertifikat',
-                    'sumber_data',
+                    'masa_berlaku',
+                    'bukti',
                 ]);
 
                 if ($request->hasFile('bukti')) {
