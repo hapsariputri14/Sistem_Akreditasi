@@ -47,6 +47,11 @@ class UserModel extends Authenticatable
         return $this->level->kode_level;
     }
 
+    public function getRoleNames()
+    {
+        return [$this->level->kode_level]; // Kembalikan sebagai array
+    }
+
     public function dokumenKriteria()
     {
         return $this->hasMany(DokumenKriteriaModel::class, 'id_user');

@@ -11,6 +11,7 @@ use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Auth;
 
 class PSertifikasiDataTable extends DataTable
 {
@@ -21,36 +22,53 @@ class PSertifikasiDataTable extends DataTable
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
+        /** @var UserModel|null $user */
+        $user = Auth::user();
+        $role = $user->getRole();
+        $isDos = $user->hasRole('DOS');
+        $isAdm = $user->hasRole('ADM');
+        $isAng = preg_match('/^ANG[1-9]$/', $role);
+
         return (new EloquentDataTable($query))
-            ->addColumn('aksi', function ($row) {
-                $validasiUrl = route('p_sertifikasi.validasi_ajax', $row->id_sertifikasi);
+            ->addColumn('aksi', function ($row) use ($user, $isDos, $isAng) {
+                $buttons = [];
                 $detailUrl = route('p_sertifikasi.detail_ajax', $row->id_sertifikasi);
-                $editUrl = route('p_sertifikasi.edit_ajax', $row->id_sertifikasi);
-                $deleteUrl = route('p_sertifikasi.confirm_ajax', $row->id_sertifikasi);
 
-                return '
-                    <div class="d-flex justify-content-center gap-2" style="white-space: nowrap;">
-                        <button onclick="modalAction(\'' . $validasiUrl . '\')" class="btn btn-sm btn-warning" style="margin-left: 5px;">
-                            <i class="fas fa-check-circle"></i> Validasi
-                        </button>
-                        <button onclick="modalAction(\'' . $detailUrl . '\')" class="btn btn-sm btn-info" style="margin-left: 5px;">
-                            <i class="fas fa-info-circle"></i> Detail
-                        </button>
-                        <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-sm btn-primary" style="margin-left: 5px;">
-                            <i class="fas fa-edit"></i> Ubah
-                        </button>
-                        <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-sm btn-danger" style="margin-left: 5px;">
-                            <i class="fas fa-trash"></i> Hapus
-                        </button>
-                    </div>
-                ';
+                // Button detail - muncul untuk semua role
+                $buttons[] = '<button onclick="modalAction(\'' . $detailUrl . '\')" class="btn btn-sm btn-info">
+                    <i class="fas fa-info-circle"></i> Detail
+                </button>';
+
+                // Button validasi - hanya untuk DOS
+                if ($isDos) {
+                    $validasiUrl = route('p_sertifikasi.validasi_ajax', $row->id_sertifikasi);
+                    $buttons[] = '<button onclick="modalAction(\'' . $validasiUrl . '\')" class="btn btn-sm btn-warning">
+                        <i class="fas fa-check-circle"></i> Validasi
+                    </button>';
+                }
+
+                // Button ubah dan hapus - hanya untuk DOS
+                if ($isDos) {
+                    $editUrl = route('p_sertifikasi.edit_ajax', $row->id_sertifikasi);
+                    $deleteUrl = route('p_sertifikasi.confirm_ajax', $row->id_sertifikasi);
+
+                    $buttons[] = '<button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-sm btn-primary">
+                        <i class="fas fa-edit"></i> Ubah
+                    </button>';
+
+                    $buttons[] = '<button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-sm btn-danger">
+                        <i class="fas fa-trash"></i> Hapus
+                    </button>';
+                }
+
+                return '<div class="d-flex justify-content-center gap-2" style="white-space: nowrap;">' .
+                    implode('', $buttons) .
+                    '</div>';
             })
-
-            ->addColumn('nama_lengkap', function ($row) {
-                return $row->dosen->nama_lengkap ?? '-';
+            ->addColumn('nama_lengkap', function ($row) use ($isDos) {
+                // Kolom nama_lengkap tidak ditampilkan untuk DOS
+                return $isDos ? '-' : ($row->dosen->nama_lengkap ?? '-');
             })
-
-            // Tambahkan badge untuk status dan sumber data (GUNAKAN EDITCOLUMN AGAR BISA DI SORT DAN SEARCH)
             ->editColumn('status', function ($row) {
                 $badgeClass = [
                     'tervalidasi' => 'badge-success',
@@ -60,7 +78,6 @@ class PSertifikasiDataTable extends DataTable
                 return '<span class="badge p-2 ' . ($badgeClass[$row->status] ?? 'badge-secondary') . '">'
                     . strtoupper($row->status) . '</span>';
             })
-
             ->editColumn('sumber_data', function ($row) {
                 $badgeClass = [
                     'p3m' => 'badge-primary',
@@ -69,8 +86,6 @@ class PSertifikasiDataTable extends DataTable
                 return '<span class="badge p-2 ' . ($badgeClass[$row->sumber_data] ?? 'badge-dark') . '">'
                     . strtoupper($row->sumber_data) . '</span>';
             })
-
-
             ->rawColumns(['aksi', 'status', 'sumber_data'])
             ->setRowId('id_sertifikasi');
     }
@@ -80,7 +95,14 @@ class PSertifikasiDataTable extends DataTable
      */
     public function query(PSertifikasiModel $model): QueryBuilder
     {
+        /** @var UserModel|null $user */
+        $user = Auth::user();
         $query = $model->newQuery()->with('dosen');
+
+        // Jika role DOS, hanya tampilkan data dosen tersebut
+        if ($user->hasRole('DOS') && $user->id_dosen) {
+            $query->where('id_dosen', $user->id_dosen);
+        }
 
         if ($status = request('filter_status')) {
             $query->where('status', $status);
@@ -92,19 +114,28 @@ class PSertifikasiDataTable extends DataTable
 
         return $query;
     }
+
     /**
      * Optional method if you want to use the html builder.
      */
     public function html(): HtmlBuilder
     {
-        return $this->builder()
+        /** @var UserModel|null $user */
+        $user = Auth::user();
+        $role = $user->getRole();
+        $isAdm = $user->hasRole('ADM');
+        $isAng = preg_match('/^ANG[1-9]$/', $role);
+
+        $builder = $this->builder()
             ->setTableId('p_sertifikasi-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            //->dom('Bfrtip')
             ->orderBy(1)
-            ->selectStyleSingle()
-            ->buttons([
+            ->selectStyleSingle();
+
+        // Button untuk ADM hanya import dan export
+        if ($isAdm) {
+            $builder->buttons([
                 Button::make('excel'),
                 Button::make('csv'),
                 Button::make('pdf'),
@@ -112,6 +143,27 @@ class PSertifikasiDataTable extends DataTable
                 Button::make('reset'),
                 Button::make('reload')
             ]);
+        }
+        // Button untuk ANG hanya detail
+        elseif ($isAng) {
+            $builder->buttons([
+                Button::make('reset'),
+                Button::make('reload')
+            ]);
+        }
+        // Button default untuk role lainnya
+        else {
+            $builder->buttons([
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+                Button::make('reset'),
+                Button::make('reload')
+            ]);
+        }
+
+        return $builder;
     }
 
     /**
@@ -119,9 +171,13 @@ class PSertifikasiDataTable extends DataTable
      */
     public function getColumns(): array
     {
-        return [
+        /** @var UserModel|null $user */
+        $user = Auth::user();
+        $role = $user->getRole();
+        $isDos = $user->hasRole('DOS');
+
+        $columns = [
             Column::make('id_sertifikasi')->title('ID'),
-            Column::make('nama_lengkap')->title('Nama Dosen'),
             Column::make('tahun_diperoleh')->title('Tahun Diperoleh'),
             Column::make('penerbit')->title('Penerbit'),
             Column::make('nama_sertifikasi')->title('Nama Sertifikasi'),
@@ -135,6 +191,15 @@ class PSertifikasiDataTable extends DataTable
                 ->width(60)
                 ->addClass('text-center'),
         ];
+
+        // Tambahkan kolom nama_lengkap jika bukan DOS
+        if (!$isDos) {
+            array_splice($columns, 1, 0, [
+                Column::make('nama_lengkap')->title('Nama Dosen')
+            ]);
+        }
+
+        return $columns;
     }
 
     /**

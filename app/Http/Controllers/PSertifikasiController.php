@@ -17,15 +17,17 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class PSertifikasiController extends Controller
 {
+
     public function index(PSertifikasiDataTable $dataTable)
     {
-        return $dataTable->render('p_sertifikasi.index');
-    }
+        /** @var UserModel|null $user */
+        $user = Auth::user();
+        $role = $user->getRole();
+        $isAdm = $user->hasRole('ADM');
+        $isDos = $user->hasRole('DOS');
+        $isAng = preg_match('/^ANG[1-9]$/', $role);
 
-    public function create_ajax()
-    {
-        $dosens = DosenModel::all();
-        return view('p_sertifikasi.create_ajax', compact('dosens'));
+        return $dataTable->render('p_sertifikasi.index', compact('isAdm', 'isAng', 'isDos'));
     }
 
     public function store_ajax(Request $request)
