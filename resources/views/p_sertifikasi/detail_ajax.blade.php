@@ -31,11 +31,26 @@
             </tr>
             <tr>
                 <th>Status</th>
-                <td>{{ $sertifikasi->status }}</td>
+                <td>
+                    <span class="badge p-2 {{ [
+                        'tervalidasi' => 'badge-success',
+                        'tidak valid' => 'badge-danger',
+                        'perlu validasi' => 'badge-warning',
+                    ][$sertifikasi->status] ?? 'badge-success' }}">
+                        {{ strtoupper($sertifikasi->status) }}
+                    </span>
+                </td>
             </tr>
             <tr>
                 <th>Sumber Data</th>
-                <td>{{ $sertifikasi->sumber_data }}</td>
+                <td>
+                    <span class="badge p-2 {{ [
+                        'p3m' => 'badge-primary',
+                        'dosen' => 'badge-secondary',
+                    ][$sertifikasi->sumber_data] ?? 'badge-primary' }}">
+                        {{ strtoupper($sertifikasi->sumber_data) }}
+                    </span>
+                </td>
             </tr>
             <tr>
                 <th>Bukti</th>
