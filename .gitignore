@@ -1,19 +1,8 @@
-# ABAIKAN: storage yang tidak perlu
+# Abaikan semua isi storage kecuali yang diizinkan
 /storage/*
 !/storage/app
 !/storage/app/public
-
-# IZINKAN folder-folder khusus kamu
-!/storage/app/public/p_hki
-!/storage/app/public/p_karya_buku
-!/storage/app/public/p_kegiatan
-!/storage/app/public/p_organisasi
-!/storage/app/public/p_penelitian
-!/storage/app/public/p_pengabdian
-!/storage/app/public/p_prestasi
-!/storage/app/public/p_profesi
-!/storage/app/public/p_publikasi
-!/storage/app/public/p_sertifikasi
+!/storage/app/public/*
 
 /.phpunit.cache
 /node_modules
