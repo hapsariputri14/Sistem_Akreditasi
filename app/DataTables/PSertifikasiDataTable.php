@@ -35,14 +35,14 @@ class PSertifikasiDataTable extends DataTable
                 $detailUrl = route('p_sertifikasi.detail_ajax', $row->id_sertifikasi);
 
                 // Button detail - muncul untuk semua role
-                $buttons[] = '<button onclick="modalAction(\'' . $detailUrl . '\')" class="btn btn-sm btn-info">
+                $buttons[] = '<button onclick="modalAction(\'' . $detailUrl . '\')" class="btn btn-sm btn-info" style="margin-left: 5px;">
                     <i class="fas fa-info-circle"></i> Detail
                 </button>';
 
                 // Button validasi - hanya untuk DOS
                 if ($isDos) {
                     $validasiUrl = route('p_sertifikasi.validasi_ajax', $row->id_sertifikasi);
-                    $buttons[] = '<button onclick="modalAction(\'' . $validasiUrl . '\')" class="btn btn-sm btn-warning">
+                    $buttons[] = '<button onclick="modalAction(\'' . $validasiUrl . '\')" class="btn btn-sm btn-warning" style="margin-left: 5px;">
                         <i class="fas fa-check-circle"></i> Validasi
                     </button>';
                 }
@@ -52,11 +52,11 @@ class PSertifikasiDataTable extends DataTable
                     $editUrl = route('p_sertifikasi.edit_ajax', $row->id_sertifikasi);
                     $deleteUrl = route('p_sertifikasi.confirm_ajax', $row->id_sertifikasi);
 
-                    $buttons[] = '<button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-sm btn-primary">
+                    $buttons[] = '<button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-sm btn-primary" style="margin-left: 5px;">
                         <i class="fas fa-edit"></i> Ubah
                     </button>';
 
-                    $buttons[] = '<button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-sm btn-danger">
+                    $buttons[] = '<button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-sm btn-danger" style="margin-left: 5px;">
                         <i class="fas fa-trash"></i> Hapus
                     </button>';
                 }

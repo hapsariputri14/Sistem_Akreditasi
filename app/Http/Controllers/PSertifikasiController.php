@@ -376,6 +376,13 @@ class PSertifikasiController extends Controller
                 'p_sertifikasi.updated_at'
             );
 
+        /** @var UserModel|null $user */
+        $user = Auth::user();
+        $role = $user->getRole();
+        if ($role === 'DOS' && $user->id_dosen) {
+            $query->where('p_sertifikasi.id_dosen', $user->id_dosen);
+        }
+
         if ($status = request('filter_status')) {
             $query->where('p_sertifikasi.status', $status);
         }
@@ -453,6 +460,13 @@ class PSertifikasiController extends Controller
     public function export_pdf()
     {
         $query = PSertifikasiModel::with('dosen')->orderBy('id_sertifikasi');
+
+        /** @var UserModel|null $user */
+        $user = Auth::user();
+        $role = $user->getRole();
+        if ($role === 'DOS' && $user->id_dosen) {
+            $query->where('id_dosen', $user->id_dosen);
+        }
 
         if ($status = request('filter_status')) {
             $query->where('status', $status);
