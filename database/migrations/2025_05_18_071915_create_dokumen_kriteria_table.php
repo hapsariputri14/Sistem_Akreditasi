@@ -15,6 +15,7 @@ return new class extends Migration
             $table->longText('content_html');
             $table->enum('status', ['tervalidasi', 'revisi', 'kosong'])->default('kosong');
             $table->foreignId('id_validator')->nullable()->constrained('user', 'id_user');
+            $table->text('komentar')->nullable();
             $table->timestamps();
         });
     }
@@ -24,3 +25,4 @@ return new class extends Migration
         Schema::dropIfExists('dokumen_kriteria');
     }
 };
+

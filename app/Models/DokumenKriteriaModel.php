@@ -16,6 +16,7 @@ class DokumenKriteriaModel extends Model
         'judul',
         'content_html',
         'status',
+        'komentar',
         'id_validator'
     ];
 

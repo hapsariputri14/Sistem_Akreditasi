@@ -20,24 +20,16 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0">Manajemen Sertifikasi</h2>
             <div>
-                @if (!$isAng) {{-- Tidak tampilkan untuk ANG --}}
-                    <a id="exportPdfBtn" class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_pdf') }}">
-                        <i class="fa-solid fa-file-pdf"></i> Export Data - PDF
-                    </a>
-                    <a id="exportExcelBtn" class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_excel') }}">
-                        <i class="fas fa-file-excel"></i> Export Data - Excel
-                    </a>
-
-                    @if ($isAdm || $isDos)
-                        {{-- Hanya tampilkan import untuk ADM --}}
-                        <button class="btn btn-primary me-2" onclick="modalAction('{{ route('p_sertifikasi.import') }}')">
-                            <i class="fa-solid fa-file-arrow-up"></i> Import Data
-                        </button>
-                    @endif
-                @endif
-
-                @if (Auth::user()->hasRole('DOS'))
-                    {{-- Hanya tampilkan untuk DOS --}}
+                <a id="exportPdfBtn" class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_pdf') }}">
+                    <i class="fa-solid fa-file-pdf"></i> Export Data - PDF
+                </a>
+                <a id="exportExcelBtn" class="btn btn-primary me-2" href="{{ route('p_sertifikasi.export_excel') }}">
+                    <i class="fas fa-file-excel"></i> Export Data - Excel
+                </a>
+                @if ($isAdm || $isDos)
+                    <button class="btn btn-primary me-2" onclick="modalAction('{{ route('p_sertifikasi.import') }}')">
+                        <i class="fa-solid fa-file-arrow-up"></i> Import Data
+                    </button>
                     <button onclick="modalAction('{{ route('p_sertifikasi.create_ajax') }}')" class="btn btn-primary">
                         <i class="fas fa-plus me-2"></i>Tambah Data
                     </button>

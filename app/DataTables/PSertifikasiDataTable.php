@@ -30,7 +30,7 @@ class PSertifikasiDataTable extends DataTable
         $isAng = preg_match('/^ANG[1-9]$/', $role);
 
         return (new EloquentDataTable($query))
-            ->addColumn('aksi', function ($row) use ($user, $isDos, $isAng) {
+            ->addColumn('aksi', function ($row) use ($user, $isDos, $isAdm) {
                 $buttons = [];
                 $detailUrl = route('p_sertifikasi.detail_ajax', $row->id_sertifikasi);
 
@@ -48,7 +48,7 @@ class PSertifikasiDataTable extends DataTable
                 }
 
                 // Button ubah dan hapus - hanya untuk DOS
-                if ($isDos) {
+                if ($isDos || $isAdm) {
                     $editUrl = route('p_sertifikasi.edit_ajax', $row->id_sertifikasi);
                     $deleteUrl = route('p_sertifikasi.confirm_ajax', $row->id_sertifikasi);
 
