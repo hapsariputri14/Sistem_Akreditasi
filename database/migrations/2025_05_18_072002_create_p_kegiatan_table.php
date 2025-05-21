@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('p_kegiatan', function (Blueprint $table) {
             $table->id('id_kegiatan');
-            $table->foreignId('id_dosen')->constrained('dosen', 'id_dosen');
+            $table->foreignId('id_user')->constrained('user', 'id_user');
             $table->enum('jenis_kegiatan', ['Lokakarya', 'Workshop', 'Pagelaran', 'Peragaan', 'Pelatihan', 'Lain_lain']);
             $table->string('tempat', 100);
             $table->date('waktu');

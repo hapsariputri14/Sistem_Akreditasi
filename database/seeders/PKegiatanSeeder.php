@@ -13,28 +13,36 @@ class PKegiatanSeeder extends Seeder
         $jenis_kegiatan = ['Lokakarya', 'Workshop', 'Pagelaran', 'Peragaan', 'Pelatihan', 'Lain_lain'];
         $peran = ['penyaji', 'peserta', 'penyaji_dan_peserta'];
 
-        for ($i = 1; $i <= 10; $i++) {
-            // Dua kegiatan untuk setiap dosen
+        $dosenUsers = DB::table('user')
+            ->join('level', 'user.id_level', '=', 'level.id_level')
+            ->where('level.kode_level', 'DOS')
+            ->get();
+
+        foreach ($dosenUsers as $user) {
             $kegiatans[] = [
-                'id_dosen' => $i,
+                'id_user' => $user->id_user,
                 'jenis_kegiatan' => $jenis_kegiatan[array_rand($jenis_kegiatan)],
-                'tempat' => 'Universitas ' . $i,
-                'waktu' => date('Y-m-d', strtotime('-' . (10 - $i) . ' months')),
+                'tempat' => 'Universitas ' . $user->id_user,
+                'waktu' => date('Y-m-d', strtotime('-' . rand(1, 12) . ' months')),
                 'peran' => $peran[array_rand($peran)],
                 'status' => 'tervalidasi',
-                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
+                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
                 'bukti' => 'contoh.pdf',
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
 
             $kegiatans[] = [
-                'id_dosen' => $i,
+                'id_user' => $user->id_user,
                 'jenis_kegiatan' => $jenis_kegiatan[array_rand($jenis_kegiatan)],
-                'tempat' => 'Kampus ' . ($i + 1),
-                'waktu' => date('Y-m-d', strtotime('-' . (5 - $i) . ' months')),
+                'tempat' => 'Kampus ' . ($user->id_user + 1),
+                'waktu' => date('Y-m-d', strtotime('-' . rand(1, 12) . ' months')),
                 'peran' => $peran[array_rand($peran)],
                 'status' => 'tervalidasi',
-                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
+                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
                 'bukti' => 'contoh.pdf',
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         }
 

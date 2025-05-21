@@ -11,18 +11,8 @@ return new class extends Migration
         Schema::create('user', function (Blueprint $table) {
             $table->id('id_user');
             $table->string('username', 50)->unique();
-            $table->string('password', 255);
-            $table->string('nama_lengkap', 100);
-            $table->string('jabatan', 100);
-            $table->string('no_telp', 20);
-            $table->text('alamat');
-
-            // Tambahkan foreign key ke tabel dosen
-            $table->foreignId('id_dosen')->nullable()->constrained('dosen', 'id_dosen')->nullOnDelete();
-
-            // Tambahkan foreign key ke tabel level
+            $table->string('password');
             $table->foreignId('id_level')->constrained('level', 'id_level');
-
             $table->rememberToken();
             $table->timestamps();
         });

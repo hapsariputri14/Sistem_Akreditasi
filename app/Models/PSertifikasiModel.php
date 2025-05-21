@@ -12,7 +12,7 @@ class PSertifikasiModel extends Model
     protected $table = 'p_sertifikasi';
     protected $primaryKey = 'id_sertifikasi';
     protected $fillable = [
-        'id_dosen',
+        'id_user',
         'tahun_diperoleh',
         'penerbit',
         'nama_sertifikasi',
@@ -28,9 +28,9 @@ class PSertifikasiModel extends Model
         'sumber_data' => 'string'
     ];
 
-    public function dosen()
+    public function user()
     {
-        return $this->belongsTo(DosenModel::class, 'id_dosen', 'id_dosen');
+        return $this->belongsTo(UserModel::class, 'id_user', 'id_user');
     }
 
     // Scope for filtering by data source

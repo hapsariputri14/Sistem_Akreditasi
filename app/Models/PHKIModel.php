@@ -12,7 +12,7 @@ class PHKIModel extends Model
     protected $table = 'p_hki';
     protected $primaryKey = 'id_hki';
     protected $fillable = [
-        'id_dosen',
+        'id_user',
         'judul',
         'tahun',
         'skema',
@@ -30,7 +30,7 @@ class PHKIModel extends Model
 
     public function dosen()
     {
-        return $this->belongsTo(DosenModel::class, 'id_dosen');
+        return $this->belongsTo(UserModel::class, 'id_user');
     }
 
     // Scope for filtering by data source

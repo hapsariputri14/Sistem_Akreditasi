@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('p_penelitian', function (Blueprint $table) {
             $table->id('id_penelitian');
-            $table->foreignId('id_dosen')->constrained('dosen', 'id_dosen');
+            $table->foreignId('id_user')->constrained('user', 'id_user');
             $table->string('judul_penelitian', 255);
             $table->string('skema', 100);
             $table->year('tahun');

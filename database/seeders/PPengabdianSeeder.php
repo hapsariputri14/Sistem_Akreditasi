@@ -12,32 +12,46 @@ class PPengabdianSeeder extends Seeder
         $pengabdians = [];
         $skema = ['KKN', 'PPM', 'Ipteks', 'Pengabdian Mandiri'];
 
-        for ($i = 1; $i <= 10; $i++) {
-            // Dua pengabdian untuk setiap dosen
+        $dosenUsers = DB::table('user')
+            ->join('level', 'user.id_level', '=', 'level.id_level')
+            ->where('level.kode_level', 'DOS')
+            ->get();
+
+        foreach ($dosenUsers as $user) {
             $pengabdians[] = [
-                'id_dosen' => $i,
-                'judul_pengabdian' => 'Pengabdian Masyarakat ' . $i,
+                'id_user' => $user->id_user,
+
+                // Key - Judul tidak boleh sama
+                'judul_pengabdian' => 'Pengabdian Masyarakat ' . $user->id_user,
+
                 'skema' => $skema[array_rand($skema)],
-                'tahun' => 2020 + $i,
+                'tahun' => rand(2018, 2023),
                 'dana' => rand(3000000, 10000000),
                 'peran' => (rand(0, 1) ? 'ketua' : 'anggota'),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
                 'status' => 'tervalidasi',
-                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
+                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
                 'bukti' => 'contoh.pdf',
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
 
             $pengabdians[] = [
-                'id_dosen' => $i,
-                'judul_pengabdian' => 'Program Kemitraan ' . $i,
+                'id_user' => $user->id_user,
+
+                // Key - Judul tidak boleh sama
+                'judul_pengabdian' => 'Program Kemitraan ' . $user->id_user,
+
                 'skema' => $skema[array_rand($skema)],
-                'tahun' => 2019 + $i,
+                'tahun' => rand(2015, 2020),
                 'dana' => rand(2000000, 8000000),
                 'peran' => (rand(0, 1) ? 'ketua' : 'anggota'),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
                 'status' => 'tervalidasi',
-                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
+                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
                 'bukti' => 'contoh.pdf',
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         }
 

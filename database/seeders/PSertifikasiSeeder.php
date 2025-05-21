@@ -10,31 +10,45 @@ class PSertifikasiSeeder extends Seeder
     public function run()
     {
         $sertifikasis = [];
+        $dosenUsers = DB::table('user')
+            ->join('level', 'user.id_level', '=', 'level.id_level')
+            ->where('level.kode_level', 'DOS')
+            ->get();
 
-        for ($i = 1; $i <= 10; $i++) {
-            // Dua sertifikasi untuk setiap dosen
+        foreach ($dosenUsers as $user) {
+            // 2 sertifikasi untuk setiap dosen
             $sertifikasis[] = [
-                'id_dosen' => $i,
-                'tahun_diperoleh' => 2020 + $i,
-                'penerbit' => 'Lembaga Sertifikasi Profesi ' . $i,
-                'nama_sertifikasi' => 'Sertifikasi Kompetensi Bidang ' . $i,
-                'nomor_sertifikat' => 'SKB-' . (1000 + $i),
-                'masa_berlaku' => '5 Tahun',
-                'status' => 'tervalidasi',
-                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => 'contoh.pdf',
+                'id_user' => $user->id_user,
+                'tahun_diperoleh' => rand(2018, 2023),
+                'penerbit' => 'Lembaga Sertifikasi Profesi ' . rand(1, 5),
+                'nama_sertifikasi' => 'Sertifikasi Kompetensi Bidang ' . ['IT', 'Pendidikan', 'Manajemen', 'Teknik'][rand(0, 3)],
+
+                // Key - Nomor Sertifikat tidak boleh sama
+                'nomor_sertifikat' => 'SKB-' . rand(1000, 9999),
+
+                'masa_berlaku' => rand(1, 5) . ' Tahun',
+                'status' => ['tervalidasi', 'perlu validasi', 'tidak valid'][rand(0, 2)],
+                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
+                'bukti' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
 
             $sertifikasis[] = [
-                'id_dosen' => $i,
-                'tahun_diperoleh' => 2019 + $i,
-                'penerbit' => 'Asosiasi Profesi ' . $i,
-                'nama_sertifikasi' => 'Sertifikasi Keahlian Khusus ' . $i,
-                'nomor_sertifikat' => 'SKK-' . (2000 + $i),
-                'masa_berlaku' => '3 Tahun',
-                'status' => 'tervalidasi',
-                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
-                'bukti' => 'contoh.pdf',
+                'id_user' => $user->id_user,
+                'tahun_diperoleh' => rand(2015, 2020),
+                'penerbit' => 'Asosiasi Profesi ' . ['Indonesia', 'Nasional', 'Internasional'][rand(0, 2)],
+                'nama_sertifikasi' => 'Sertifikasi Keahlian ' . ['Khusus', 'Profesional', 'Teknis'][rand(0, 2)],
+
+                // Key - Nomor Sertifikat tidak boleh sama
+                'nomor_sertifikat' => 'SKK-' . rand(1000, 9999),
+                
+                'masa_berlaku' => rand(1, 3) . ' Tahun',
+                'status' => ['tervalidasi', 'perlu validasi', 'tidak valid'][rand(0, 2)],
+                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
+                'bukti' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         }
 

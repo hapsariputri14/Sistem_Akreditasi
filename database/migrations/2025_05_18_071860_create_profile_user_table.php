@@ -8,8 +8,9 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('dosen', function (Blueprint $table) {
-            $table->id('id_dosen');
+        Schema::create('profile_user', function (Blueprint $table) {
+            $table->id('id_profile');
+            $table->foreignId('id_user')->constrained('user', 'id_user');
             $table->string('nama_lengkap', 100);
             $table->string('tempat_tanggal_lahir', 100);
             $table->string('nidn', 20);
@@ -19,12 +20,14 @@ return new class extends Migration
             $table->string('pendidikan_terakhir', 50);
             $table->string('pangkat', 50);
             $table->string('jabatan_fungsional', 100);
+            $table->string('no_telp', 20)->nullable();
+            $table->text('alamat')->nullable();
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('dosen');
+        Schema::dropIfExists('profile_user');
     }
 };

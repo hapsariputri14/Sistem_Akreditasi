@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('p_karya_buku', function (Blueprint $table) {
             $table->id('id_karya_buku');
-            $table->foreignId('id_dosen')->constrained('dosen', 'id_dosen');
+            $table->foreignId('id_user')->constrained('user', 'id_user');
             $table->string('judul_buku', 255);
             $table->year('tahun');
             $table->integer('jumlah_halaman');

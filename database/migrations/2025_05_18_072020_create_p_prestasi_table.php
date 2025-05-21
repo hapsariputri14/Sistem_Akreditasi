@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('p_prestasi', function (Blueprint $table) {
             $table->id('id_prestasi');
-            $table->foreignId('id_dosen')->constrained('dosen', 'id_dosen');
+            $table->foreignId('id_user')->constrained('user', 'id_user');
             $table->string('prestasi_yang_dicapai', 255);
             $table->date('waktu_pencapaian');
             $table->enum('tingkat', ['Lokal', 'Nasional', 'Internasional']);

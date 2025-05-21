@@ -12,7 +12,7 @@ class PPenelitianModel extends Model
     protected $table = 'p_penelitian';
     protected $primaryKey = 'id_penelitian';
     protected $fillable = [
-        'id_dosen',
+        'id_user',
         'judul_penelitian',
         'skema',
         'tahun',
@@ -29,9 +29,9 @@ class PPenelitianModel extends Model
         'sumber_data' => 'string'
     ];
 
-    public function dosen()
+    public function user()
     {
-        return $this->belongsTo(DosenModel::class, 'id_dosen');
+        return $this->belongsTo(UserModel::class, 'id_user');
     }
 
     // Scope for filtering by data source

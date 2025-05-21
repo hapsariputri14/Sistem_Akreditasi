@@ -12,7 +12,7 @@ class PPublikasiModel extends Model
     protected $table = 'p_publikasi';
     protected $primaryKey = 'id_publikasi';
     protected $fillable = [
-        'id_dosen',
+        'id_user',
         'judul',
         'tempat_publikasi',
         'tahun_publikasi',
@@ -29,9 +29,9 @@ class PPublikasiModel extends Model
         'sumber_data' => 'string'
     ];
 
-    public function dosen()
+    public function user()
     {
-        return $this->belongsTo(DosenModel::class, 'id_dosen');
+        return $this->belongsTo(UserModel::class, 'id_user');
     }
 
     // Scope for filtering by data source

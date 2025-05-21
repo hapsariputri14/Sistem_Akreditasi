@@ -12,26 +12,40 @@ class PPrestasiSeeder extends Seeder
         $prestasis = [];
         $tingkat = ['Lokal', 'Nasional', 'Internasional'];
 
-        for ($i = 1; $i <= 10; $i++) {
-            // Dua prestasi untuk setiap dosen
+        $dosenUsers = DB::table('user')
+            ->join('level', 'user.id_level', '=', 'level.id_level')
+            ->where('level.kode_level', 'DOS')
+            ->get();
+
+        foreach ($dosenUsers as $user) {
             $prestasis[] = [
-                'id_dosen' => $i,
-                'prestasi_yang_dicapai' => 'Penghargaan Dosen Berprestasi ' . $i,
-                'waktu_pencapaian' => date('Y-m-d', strtotime('-' . (12 - $i) . ' months')),
+                'id_user' => $user->id_user,
+
+                // Key - Prestasi tidak boleh sama
+                'prestasi_yang_dicapai' => 'Penghargaan Dosen Berprestasi ' . $user->id_user,
+
+                'waktu_pencapaian' => date('Y-m-d', strtotime('-' . rand(1, 12) . ' months')),
                 'tingkat' => $tingkat[array_rand($tingkat)],
                 'status' => 'tervalidasi',
-                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
+                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
                 'bukti' => 'contoh.pdf',
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
 
             $prestasis[] = [
-                'id_dosen' => $i,
-                'prestasi_yang_dicapai' => 'Juara ' . $i . ' Lomba Inovasi Pembelajaran',
-                'waktu_pencapaian' => date('Y-m-d', strtotime('-' . (6 - $i) . ' months')),
+                'id_user' => $user->id_user,
+
+                // Key - Prestasi tidak boleh sama
+                'prestasi_yang_dicapai' => 'Juara ' . $user->id_user . ' Lomba Inovasi Pembelajaran',
+                
+                'waktu_pencapaian' => date('Y-m-d', strtotime('-' . rand(1, 12) . ' months')),
                 'tingkat' => $tingkat[array_rand($tingkat)],
                 'status' => 'tervalidasi',
-                'sumber_data' => ($i % 2 == 0) ? 'p3m' : 'dosen',
+                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
                 'bukti' => 'contoh.pdf',
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         }
 

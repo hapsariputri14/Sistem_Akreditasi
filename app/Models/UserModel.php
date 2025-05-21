@@ -16,10 +16,6 @@ class UserModel extends Authenticatable
     protected $fillable = [
         'username',
         'password',
-        'nama_lengkap',
-        'jabatan',
-        'no_telp',
-        'alamat',
         'id_level'
     ];
 
@@ -32,12 +28,17 @@ class UserModel extends Authenticatable
         return $this->belongsTo(LevelModel::class, 'id_level');
     }
 
-    public function hasRoleName() : string
+    public function profile()
+    {
+        return $this->hasOne(ProfileUser::class, 'id_user', 'id_user');
+    }
+
+    public function hasRoleName(): string
     {
         return $this->level->kode_level;
     }
 
-    public function hasRole($role) : bool
+    public function hasRole($role): bool
     {
         return $this->level->kode_level === $role;
     }

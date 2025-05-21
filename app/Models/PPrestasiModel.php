@@ -12,7 +12,7 @@ class PPrestasiModel extends Model
     protected $table = 'p_prestasi';
     protected $primaryKey = 'id_prestasi';
     protected $fillable = [
-        'id_dosen',
+        'id_user',
         'prestasi_yang_dicapai',
         'waktu_pencapaian',
         'tingkat',
@@ -27,9 +27,9 @@ class PPrestasiModel extends Model
         'sumber_data' => 'string'
     ];
 
-    public function dosen()
+    public function user()
     {
-        return $this->belongsTo(DosenModel::class, 'id_dosen');
+        return $this->belongsTo(UserModel::class, 'id_user');
     }
 
     // Scope for filtering by data source
