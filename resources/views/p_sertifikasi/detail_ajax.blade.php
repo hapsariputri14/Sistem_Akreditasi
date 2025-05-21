@@ -6,8 +6,8 @@
     <table class="table table-bordered">
         <tbody>
             <tr>
-                <th>Nama Dosen</th>
-                <td>{{ $sertifikasi->dosen->nama_lengkap ?? '-' }}</td>
+                <th>Nama User</th>
+                <td>{{ $sertifikasi->user->profile->nama_lengkap ?? '-' }}</td>
             </tr>
             <tr>
                 <th>Tahun Diperoleh</th>
@@ -77,4 +77,3 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
 </div>
-

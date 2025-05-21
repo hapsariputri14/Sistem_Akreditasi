@@ -10,7 +10,7 @@
                 <tbody>
                     <tr>
                         <th class="w-25 bg-light">Nama Dosen</th>
-                        <td>{{ $sertifikasi->dosen->nama_lengkap ?? '-' }}</td>
+                        <td>{{ $sertifikasi->user->profile->nama_lengkap ?? '-' }}</td>
                     </tr>
                     <tr>
                         <th class="bg-light">Tahun Diperoleh</th>

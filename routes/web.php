@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/export_pdf', [LevelController::class, 'export_pdf'])->name('export_pdf');
     });
 
-    Route::prefix('p_sertifikasi')->name('p_sertifikasi.')->middleware('authorize:DOS,ANG1,ANG2,ANG3,ANG4,ANG5,ANG6,ANG7,ANG8,ANG9,ADM')->group(function () {
+    Route::prefix('p_sertifikasi')->name('p_sertifikasi.')->middleware('authorize:DOS,ANG,ADM')->group(function () {
         Route::get('/', [PSertifikasiController::class, 'index'])->name('index');
 
         // CRUD routes

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PSertifikasiModel;
-use App\Models\DosenModel;
+use App\Models\UserModel;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use App\DataTables\PSertifikasiDataTable;
@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class PSertifikasiController extends Controller
 {
-
     public function index(PSertifikasiDataTable $dataTable)
     {
         /** @var UserModel|null $user */
@@ -25,9 +25,18 @@ class PSertifikasiController extends Controller
         $role = $user->getRole();
         $isAdm = $user->hasRole('ADM');
         $isDos = $user->hasRole('DOS');
-        $isAng = preg_match('/^ANG[1-9]$/', $role);
+        $isAng = $user->hasRole('ANG');
 
         return $dataTable->render('p_sertifikasi.index', compact('isAdm', 'isAng', 'isDos'));
+    }
+
+    public function create_ajax()
+    {
+        $dosens = UserModel::whereHas('level', function ($query) {
+            $query->where('kode_level', 'DOS');
+        })->get();
+
+        return view('p_sertifikasi.create_ajax', compact('dosens'));
     }
 
     public function store_ajax(Request $request)
@@ -56,13 +65,13 @@ class PSertifikasiController extends Controller
             try {
                 /** @var UserModel|null $user */
                 $user = Auth::user();
-                $id_dosen = $user->id_dosen; // sesuaikan sesuai relasi user ke dosen
+                $id_user = $user->id_user;
 
-                if (!$id_dosen) {
+                if (!$id_user) {
                     return response()->json([
                         'status' => false,
                         'alert' => 'error',
-                        'message' => 'ID dosen tidak ditemukan. Pastikan akun user terkait dosen.',
+                        'message' => 'ID user tidak ditemukan. Pastikan akun user terkait.',
                     ]);
                 }
 
@@ -74,18 +83,15 @@ class PSertifikasiController extends Controller
                     'masa_berlaku',
                 ]);
 
-                $data['id_dosen'] = $id_dosen;
+                $data['id_user'] = $id_user;
 
-                // Set status otomatis berdasarkan role user
                 if ($user->hasRole('DOS')) {
                     $data['status'] = 'Tervalidasi';
                     $data['sumber_data'] = 'dosen';
                 } elseif ($user->hasRole('ADM')) {
-                    // Bisa kamu set default "Perlu Validasi" atau bisa ambil dari input request kalau kamu mau
                     $data['status'] = 'Perlu Validasi';
                     $data['sumber_data'] = 'p3m';
                 } else {
-                    // fallback kalau ada role lain
                     $data['status'] = $request->input('status', 'Perlu Validasi');
                     $data['sumber_data'] = $request->input('sumber_data', 'p3m');
                 }
@@ -162,7 +168,6 @@ class PSertifikasiController extends Controller
                 ]);
 
                 if ($request->hasFile('bukti')) {
-                    // Delete old file if exists
                     if ($sertifikasi->bukti && Storage::exists('public/p_sertifikasi/' . $sertifikasi->bukti)) {
                         Storage::delete('public/p_sertifikasi/' . $sertifikasi->bukti);
                     }
@@ -226,7 +231,7 @@ class PSertifikasiController extends Controller
 
     public function detail_ajax($id)
     {
-        $sertifikasi = PSertifikasiModel::with('dosen')->findOrFail($id);
+        $sertifikasi = PSertifikasiModel::with('user.profile')->findOrFail($id);
         return view('p_sertifikasi.detail_ajax', compact('sertifikasi'));
     }
 
@@ -275,28 +280,35 @@ class PSertifikasiController extends Controller
             $existingCertificates = PSertifikasiModel::pluck('nomor_sertifikat')->toArray();
 
             foreach ($data as $row => $values) {
-                if ($row == 1) continue; // Skip header
+                if ($row == 1) continue;
 
-                // Skip if certificate number already exists
+                $nidn = $values['A'];
+                $user = DB::table('profile_user')->where('nidn', $nidn)->first();
+
+                if (!$user) {
+                    $errors[] = "Baris $row: NIDN $nidn tidak ditemukan di data profil user";
+                    continue;
+                }
+
                 if (in_array($values['E'], $existingCertificates)) {
                     $skippedData[] = "Baris $row: Sertifikasi dengan nomor sertifikat {$values['E']} sudah ada dan akan diabaikan";
                     continue;
                 }
 
                 $validator = Validator::make([
-                    'id_dosen' => $values['A'],
+                    'id_user' => $user->id_user,
                     'tahun_diperoleh' => $values['B'],
                     'penerbit' => $values['C'],
                     'nama_sertifikasi' => $values['D'],
                     'nomor_sertifikat' => $values['E'],
                     'masa_berlaku' => $values['F'],
                 ], [
-                    'id_dosen' => 'required|integer|exists:dosen,id_dosen',
+                    'id_user' => 'required|integer|exists:user,id_user',
                     'tahun_diperoleh' => 'required|integer|min:1900|max:' . (date('Y') + 5),
                     'penerbit' => 'required|string|max:255',
                     'nama_sertifikasi' => 'required|string|max:255',
                     'nomor_sertifikat' => 'required|string|max:255|unique:p_sertifikasi,nomor_sertifikat',
-                    'masa_berlaku' => 'required|string|max:50', // BUKAN DATE TAPI STRING
+                    'masa_berlaku' => 'required|string|max:50',
                 ]);
 
                 if ($validator->fails()) {
@@ -305,7 +317,7 @@ class PSertifikasiController extends Controller
                 }
 
                 $insertData[] = [
-                    'id_dosen' => $values['A'],
+                    'id_user' => $user->id_user,
                     'tahun_diperoleh' => $values['B'],
                     'penerbit' => $values['C'],
                     'nama_sertifikasi' => $values['D'],
@@ -360,11 +372,11 @@ class PSertifikasiController extends Controller
 
     public function export_excel()
     {
-        // Join dengan tabel dosen untuk mendapatkan nama lengkap
-        $query = PSertifikasiModel::join('dosen', 'p_sertifikasi.id_dosen', '=', 'dosen.id_dosen')
+        $query = PSertifikasiModel::join('user', 'p_sertifikasi.id_user', '=', 'user.id_user')
+            ->join('profile_user', 'user.id_user', '=', 'profile_user.id_user')
             ->select(
                 'p_sertifikasi.id_sertifikasi',
-                'dosen.nama_lengkap as nama_dosen',
+                'profile_user.nama_lengkap as nama_user',
                 'p_sertifikasi.tahun_diperoleh',
                 'p_sertifikasi.penerbit',
                 'p_sertifikasi.nama_sertifikasi',
@@ -379,8 +391,8 @@ class PSertifikasiController extends Controller
         /** @var UserModel|null $user */
         $user = Auth::user();
         $role = $user->getRole();
-        if ($role === 'DOS' && $user->id_dosen) {
-            $query->where('p_sertifikasi.id_dosen', $user->id_dosen);
+        if ($role === 'DOS' && $user->id_user) {
+            $query->where('p_sertifikasi.id_user', $user->id_user);
         }
 
         if ($status = request('filter_status')) {
@@ -396,7 +408,6 @@ class PSertifikasiController extends Controller
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Header
         $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'ID Sertifikasi');
         $sheet->setCellValue('C1', 'Nama Dosen');
@@ -410,16 +421,14 @@ class PSertifikasiController extends Controller
         $sheet->setCellValue('K1', 'Created At');
         $sheet->setCellValue('L1', 'Updated At');
 
-        // Style header
         $sheet->getStyle('A1:L1')->getFont()->setBold(true);
 
-        // Isi data
         $no = 1;
         $row = 2;
         foreach ($sertifikasi as $data) {
             $sheet->setCellValue('A' . $row, $no);
             $sheet->setCellValue('B' . $row, $data->id_sertifikasi);
-            $sheet->setCellValue('C' . $row, $data->nama_dosen);
+            $sheet->setCellValue('C' . $row, $data->nama_user);
             $sheet->setCellValue('D' . $row, $data->tahun_diperoleh);
             $sheet->setCellValue('E' . $row, $data->penerbit);
             $sheet->setCellValue('F' . $row, $data->nama_sertifikasi);
@@ -433,7 +442,6 @@ class PSertifikasiController extends Controller
             $no++;
         }
 
-        // Auto size kolom
         foreach (range('A', 'L') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
@@ -443,7 +451,6 @@ class PSertifikasiController extends Controller
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         $filename = 'Data Sertifikasi ' . date("Y-m-d H:i:s") . '.xlsx';
 
-        // Header untuk download
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
@@ -459,13 +466,13 @@ class PSertifikasiController extends Controller
 
     public function export_pdf()
     {
-        $query = PSertifikasiModel::with('dosen')->orderBy('id_sertifikasi');
+        $query = PSertifikasiModel::with('user.profile')->orderBy('id_sertifikasi');
 
         /** @var UserModel|null $user */
         $user = Auth::user();
         $role = $user->getRole();
-        if ($role === 'DOS' && $user->id_dosen) {
-            $query->where('id_dosen', $user->id_dosen);
+        if ($role === 'DOS' && $user->id_user) {
+            $query->where('id_user', $user->id_user);
         }
 
         if ($status = request('filter_status')) {
@@ -478,11 +485,10 @@ class PSertifikasiController extends Controller
 
         $sertifikasi = $query->get();
 
-        // Transform data for PDF view
         $data = $sertifikasi->map(function ($item) {
             return [
                 'id_sertifikasi' => $item->id_sertifikasi,
-                'nama_dosen' => $item->dosen ? $item->dosen->nama_lengkap : '-',
+                'nama_dosen' => $item->user && $item->user->profile ? $item->user->profile->nama_lengkap : '-',
                 'tahun_diperoleh' => $item->tahun_diperoleh,
                 'penerbit' => $item->penerbit,
                 'nama_sertifikasi' => $item->nama_sertifikasi,
@@ -500,7 +506,7 @@ class PSertifikasiController extends Controller
             'sertifikasi' => $data
         ]);
 
-        $pdf->setPaper('a4', 'landscape'); // Landscape for better fit
+        $pdf->setPaper('a4', 'landscape');
         $pdf->setOption('isRemoteEnabled', true);
         $pdf->setOption('isHtml5ParserEnabled', true);
         $pdf->setOption('chroot', base_path('public'));
