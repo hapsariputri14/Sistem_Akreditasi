@@ -130,7 +130,7 @@ class PSertifikasiController extends Controller
                         'message' => 'Data dengan NIDN dan Nomor Sertifikat yang sama sudah ada.',
                     ]);
                 }
-                
+
                 $data = $request->only([
                     'tahun_diperoleh',
                     'penerbit',
@@ -414,9 +414,9 @@ class PSertifikasiController extends Controller
             $role = $authUser ? $authUser->getRole() : null;
 
             foreach ($data as $row => $values) {
-                if ($row == 1) continue;
+                if ($row == 1) continue; // Skip header
 
-                $nidn = $values['A'];
+                $nidn = trim($values['A']);
                 $user = DB::table('profile_user')->where('nidn', $nidn)->first();
 
                 if (!$user) {
@@ -424,17 +424,25 @@ class PSertifikasiController extends Controller
                     continue;
                 }
 
-                if (in_array($values['E'], $existingCertificates)) {
-                    $skippedData[] = "Baris $row: Sertifikasi dengan nomor sertifikat {$values['E']} sudah ada dan akan diabaikan";
+                $id_user = $user->id_user;
+                $nomorSertifikat = trim($values['E']);
+
+                // Duplikat berdasarkan id_user dan nomor_sertifikat
+                $exists = PSertifikasiModel::where('id_user', $id_user)
+                    ->where('nomor_sertifikat', $nomorSertifikat)
+                    ->exists();
+
+                if ($exists) {
+                    $skippedData[] = "Baris $row: Sertifikasi dengan NIDN $nidn dan Nomor Sertifikat $nomorSertifikat sudah ada dan akan diabaikan";
                     continue;
                 }
 
                 $validator = Validator::make([
-                    'id_user' => $user->id_user,
+                    'id_user' => $id_user,
                     'tahun_diperoleh' => $values['B'],
                     'penerbit' => $values['C'],
                     'nama_sertifikasi' => $values['D'],
-                    'nomor_sertifikat' => $values['E'],
+                    'nomor_sertifikat' => $nomorSertifikat,
                     'masa_berlaku' => $values['F'],
                 ], [
                     'id_user' => 'required|integer|exists:user,id_user',
@@ -462,19 +470,17 @@ class PSertifikasiController extends Controller
                 }
 
                 $insertData[] = [
-                    'id_user' => $user->id_user,
+                    'id_user' => $id_user,
                     'tahun_diperoleh' => $values['B'],
                     'penerbit' => $values['C'],
                     'nama_sertifikasi' => $values['D'],
-                    'nomor_sertifikat' => $values['E'],
+                    'nomor_sertifikat' => $nomorSertifikat,
                     'masa_berlaku' => $values['F'],
                     'status' => $status,
                     'sumber_data' => $sumber_data,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
-
-                $existingCertificates[] = $values['E'];
             }
 
             $allMessages = array_merge($skippedData, $errors);
