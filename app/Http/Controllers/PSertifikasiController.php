@@ -70,7 +70,7 @@ class PSertifikasiController extends Controller
                 'tahun_diperoleh' => 'required|integer',
                 'penerbit' => 'required|string|max:255',
                 'nama_sertifikasi' => 'required|string|max:255',
-                'nomor_sertifikat' => 'required|string|max:255|unique:p_sertifikasi,nomor_sertifikat',
+                'nomor_sertifikat' => 'required|string|max:255',
                 'masa_berlaku' => 'required|string|max:50',
                 'bukti' => $role === 'DOS' ? 'required|file|mimes:pdf,jpg,jpeg,png|max:2048' : 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ];
@@ -118,6 +118,19 @@ class PSertifikasiController extends Controller
                     ]);
                 }
 
+                // Custom duplicate check for id_user and nomor_sertifikat
+                $exists = PSertifikasiModel::where('id_user', $id_user)
+                    ->where('nomor_sertifikat', $request->input('nomor_sertifikat'))
+                    ->exists();
+
+                if ($exists) {
+                    return response()->json([
+                        'status' => false,
+                        'alert' => 'error',
+                        'message' => 'Data dengan NIDN dan Nomor Sertifikat yang sama sudah ada.',
+                    ]);
+                }
+                
                 $data = $request->only([
                     'tahun_diperoleh',
                     'penerbit',
@@ -181,21 +194,37 @@ class PSertifikasiController extends Controller
 
     public function edit_ajax($id)
     {
+        $dosens = UserModel::whereHas('level', function ($query) {
+            $query->where('kode_level', 'DOS');
+        })->get();
+
+        /** @var UserModel|null $user */
+        $user = Auth::user();
+        $role = $user ? $user->getRole() : null;
+
         $sertifikasi = PSertifikasiModel::findOrFail($id);
-        return view('p_sertifikasi.edit_ajax', compact('sertifikasi'));
+        return view('p_sertifikasi.edit_ajax', compact('sertifikasi', 'dosens', 'role'));
     }
 
     public function update_ajax(Request $request, $id)
     {
+        /** @var UserModel|null $user */
+        $user = Auth::user();
+        $role = $user ? $user->getRole() : null;
+
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'tahun_diperoleh' => 'required|integer',
                 'penerbit' => 'required|string|max:255',
                 'nama_sertifikasi' => 'required|string|max:255',
-                'nomor_sertifikat' => 'required|string|max:255|unique:p_sertifikasi,nomor_sertifikat',
+                'nomor_sertifikat' => 'required|string|max:255',
                 'masa_berlaku' => 'required|string|max:50',
                 'bukti' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ];
+
+            if ($role === 'ADM') {
+                $rules['nidn'] = 'required|string|exists:profile_user,nidn';
+            }
 
             $validator = Validator::make($request->all(), $rules);
 
@@ -211,6 +240,47 @@ class PSertifikasiController extends Controller
             $sertifikasi = PSertifikasiModel::findOrFail($id);
 
             try {
+                if ($role === 'ADM') {
+                    $nidn = $request->input('nidn');
+                    $profileUser = DB::table('profile_user')->where('nidn', $nidn)->first();
+
+                    if (!$profileUser) {
+                        return response()->json([
+                            'status' => false,
+                            'alert' => 'error',
+                            'message' => 'NIDN tidak ditemukan di data profil user',
+                        ]);
+                    }
+
+                    $id_user = $profileUser->id_user;
+                } elseif ($role === 'DOS') {
+                    $id_user = $user->id_user;
+                } else {
+                    $id_user = $user->id_user;
+                }
+
+                if (!$id_user) {
+                    return response()->json([
+                        'status' => false,
+                        'alert' => 'error',
+                        'message' => 'ID user tidak ditemukan. Pastikan akun user terkait.',
+                    ]);
+                }
+
+                // Custom duplicate check for id_user and nomor_sertifikat excluding current record
+                $exists = PSertifikasiModel::where('id_user', $id_user)
+                    ->where('nomor_sertifikat', $request->input('nomor_sertifikat'))
+                    ->where('id_sertifikasi', '!=', $id)
+                    ->exists();
+
+                if ($exists) {
+                    return response()->json([
+                        'status' => false,
+                        'alert' => 'error',
+                        'message' => 'Data dengan NIDN dan Nomor Sertifikat yang sama sudah ada.',
+                    ]);
+                }
+
                 $data = $request->only([
                     'tahun_diperoleh',
                     'penerbit',
@@ -339,6 +409,10 @@ class PSertifikasiController extends Controller
 
             $existingCertificates = PSertifikasiModel::pluck('nomor_sertifikat')->toArray();
 
+            /** @var \App\Models\UserModel|null $authUser */
+            $authUser = Auth::user();
+            $role = $authUser ? $authUser->getRole() : null;
+
             foreach ($data as $row => $values) {
                 if ($row == 1) continue;
 
@@ -367,13 +441,24 @@ class PSertifikasiController extends Controller
                     'tahun_diperoleh' => 'required|integer|min:1900|max:' . (date('Y') + 5),
                     'penerbit' => 'required|string|max:255',
                     'nama_sertifikasi' => 'required|string|max:255',
-                    'nomor_sertifikat' => 'required|string|max:255|unique:p_sertifikasi,nomor_sertifikat',
+                    'nomor_sertifikat' => 'required|string|max:255',
                     'masa_berlaku' => 'required|string|max:50',
                 ]);
 
                 if ($validator->fails()) {
                     $errors[] = "Baris $row: " . implode(', ', $validator->errors()->all());
                     continue;
+                }
+
+                $status = 'perlu validasi';
+                $sumber_data = 'p3m';
+
+                if ($role === 'DOS') {
+                    $status = 'tervalidasi';
+                    $sumber_data = 'dosen';
+                } elseif ($role === 'ADM') {
+                    $status = 'perlu validasi';
+                    $sumber_data = 'p3m';
                 }
 
                 $insertData[] = [
@@ -383,8 +468,8 @@ class PSertifikasiController extends Controller
                     'nama_sertifikasi' => $values['D'],
                     'nomor_sertifikat' => $values['E'],
                     'masa_berlaku' => $values['F'],
-                    'status' => 'perlu validasi',
-                    'sumber_data' => 'p3m',
+                    'status' => $status,
+                    'sumber_data' => $sumber_data,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
