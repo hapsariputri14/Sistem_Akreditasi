@@ -36,12 +36,20 @@ class PSertifikasiController extends Controller
             $query->where('kode_level', 'DOS');
         })->get();
 
-        return view('p_sertifikasi.create_ajax', compact('dosens'));
+        /** @var UserModel|null $user */
+        $user = Auth::user();
+        $role = $user ? $user->getRole() : null;
+
+        return view('p_sertifikasi.create_ajax', compact('dosens', 'role'));
     }
 
     public function store_ajax(Request $request)
     {
         if ($request->ajax() || $request->wantsJson()) {
+            /** @var UserModel|null $user */
+            $user = Auth::user();
+            $role = $user ? $user->getRole() : null;
+
             $rules = [
                 'tahun_diperoleh' => 'required|integer',
                 'penerbit' => 'required|string|max:255',
@@ -50,6 +58,10 @@ class PSertifikasiController extends Controller
                 'masa_berlaku' => 'required|string|max:50',
                 'bukti' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ];
+
+            if ($role === 'ADM') {
+                $rules['nidn'] = 'required|string|exists:profile_user,nidn';
+            }
 
             $validator = Validator::make($request->all(), $rules);
 
@@ -63,9 +75,24 @@ class PSertifikasiController extends Controller
             }
 
             try {
-                /** @var UserModel|null $user */
-                $user = Auth::user();
-                $id_user = $user->id_user;
+                if ($role === 'ADM') {
+                    $nidn = $request->input('nidn');
+                    $profileUser = DB::table('profile_user')->where('nidn', $nidn)->first();
+
+                    if (!$profileUser) {
+                        return response()->json([
+                            'status' => false,
+                            'alert' => 'error',
+                            'message' => 'NIDN tidak ditemukan di data profil user',
+                        ]);
+                    }
+
+                    $id_user = $profileUser->id_user;
+                } elseif ($role === 'DOS') {
+                    $id_user = $user->id_user;
+                } else {
+                    $id_user = $user->id_user;
+                }
 
                 if (!$id_user) {
                     return response()->json([
@@ -85,10 +112,10 @@ class PSertifikasiController extends Controller
 
                 $data['id_user'] = $id_user;
 
-                if ($user->hasRole('DOS')) {
+                if ($role === 'DOS') {
                     $data['status'] = 'Tervalidasi';
                     $data['sumber_data'] = 'dosen';
-                } elseif ($user->hasRole('ADM')) {
+                } elseif ($role === 'ADM') {
                     $data['status'] = 'Perlu Validasi';
                     $data['sumber_data'] = 'p3m';
                 } else {
@@ -98,8 +125,16 @@ class PSertifikasiController extends Controller
 
                 if ($request->hasFile('bukti')) {
                     $file = $request->file('bukti');
-                    $path = $file->store('public/p_sertifikasi');
-                    $data['bukti'] = basename($path);
+                    $nidnPrefix = '';
+                    if (isset($nidn)) {
+                        $nidnPrefix = $nidn . '_';
+                    } elseif ($role === 'DOS') {
+                        $nidnPrefix = $user->nidn ? $user->nidn . '_' : '';
+                    }
+                    $originalName = $file->getClientOriginalName();
+                    $filename = $nidnPrefix . $originalName;
+                    $path = $file->storeAs('public/p_sertifikasi', $filename);
+                    $data['bukti'] = $filename;
                 }
 
                 PSertifikasiModel::create($data);
@@ -172,8 +207,14 @@ class PSertifikasiController extends Controller
                         Storage::delete('public/p_sertifikasi/' . $sertifikasi->bukti);
                     }
                     $file = $request->file('bukti');
-                    $path = $file->store('public/p_sertifikasi');
-                    $data['bukti'] = basename($path);
+                    $nidnPrefix = '';
+                    if ($sertifikasi->user && $sertifikasi->user->profile) {
+                        $nidnPrefix = $sertifikasi->user->profile->nidn ? $sertifikasi->user->profile->nidn . '_' : '';
+                    }
+                    $originalName = $file->getClientOriginalName();
+                    $filename = $nidnPrefix . $originalName;
+                    $path = $file->storeAs('public/p_sertifikasi', $filename);
+                    $data['bukti'] = $filename;
                 }
 
                 $sertifikasi->update($data);
