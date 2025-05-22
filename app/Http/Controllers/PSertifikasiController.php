@@ -30,6 +30,22 @@ class PSertifikasiController extends Controller
         return $dataTable->render('p_sertifikasi.index', compact('isAdm', 'isAng', 'isDos'));
     }
 
+    private function generateUniqueFilename($directory, $filename)
+    {
+        $filePath = $directory . '/' . $filename;
+        $fileInfo = pathinfo($filename);
+        $name = $fileInfo['filename'];
+        $extension = isset($fileInfo['extension']) ? '.' . $fileInfo['extension'] : '';
+        $counter = 1;
+
+        while (Storage::exists($filePath)) {
+            $filePath = $directory . '/' . $name . '_' . $counter . $extension;
+            $counter++;
+        }
+
+        return basename($filePath);
+    }
+
     public function create_ajax()
     {
         $dosens = UserModel::whereHas('level', function ($query) {
@@ -54,9 +70,9 @@ class PSertifikasiController extends Controller
                 'tahun_diperoleh' => 'required|integer',
                 'penerbit' => 'required|string|max:255',
                 'nama_sertifikasi' => 'required|string|max:255',
-                'nomor_sertifikat' => 'required|string|max:255',
+                'nomor_sertifikat' => 'required|string|max:255|unique:p_sertifikasi,nomor_sertifikat',
                 'masa_berlaku' => 'required|string|max:50',
-                'bukti' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'bukti' => $role === 'DOS' ? 'required|file|mimes:pdf,jpg,jpeg,png|max:2048' : 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ];
 
             if ($role === 'ADM') {
@@ -126,13 +142,15 @@ class PSertifikasiController extends Controller
                 if ($request->hasFile('bukti')) {
                     $file = $request->file('bukti');
                     $nidnPrefix = '';
-                    if (isset($nidn)) {
+                    if ($role === 'ADM' && isset($nidn)) {
                         $nidnPrefix = $nidn . '_';
                     } elseif ($role === 'DOS') {
-                        $nidnPrefix = $user->nidn ? $user->nidn . '_' : '';
+                        $profileUser = DB::table('profile_user')->where('id_user', $user->id_user)->first();
+                        $nidnPrefix = $profileUser && $profileUser->nidn ? $profileUser->nidn . '_' : '';
                     }
                     $originalName = $file->getClientOriginalName();
                     $filename = $nidnPrefix . $originalName;
+                    $filename = $this->generateUniqueFilename('public/p_sertifikasi', $filename);
                     $path = $file->storeAs('public/p_sertifikasi', $filename);
                     $data['bukti'] = $filename;
                 }
@@ -174,7 +192,7 @@ class PSertifikasiController extends Controller
                 'tahun_diperoleh' => 'required|integer',
                 'penerbit' => 'required|string|max:255',
                 'nama_sertifikasi' => 'required|string|max:255',
-                'nomor_sertifikat' => 'required|string|max:255',
+                'nomor_sertifikat' => 'required|string|max:255|unique:p_sertifikasi,nomor_sertifikat',
                 'masa_berlaku' => 'required|string|max:50',
                 'bukti' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ];
@@ -213,6 +231,7 @@ class PSertifikasiController extends Controller
                     }
                     $originalName = $file->getClientOriginalName();
                     $filename = $nidnPrefix . $originalName;
+                    $filename = $this->generateUniqueFilename('public/p_sertifikasi', $filename);
                     $path = $file->storeAs('public/p_sertifikasi', $filename);
                     $data['bukti'] = $filename;
                 }
