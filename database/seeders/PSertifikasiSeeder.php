@@ -17,6 +17,7 @@ class PSertifikasiSeeder extends Seeder
 
         foreach ($dosenUsers as $user) {
             // 2 sertifikasi untuk setiap dosen
+            $sumber_data = ['p3m', 'dosen'][rand(0, 1)];
             $sertifikasis[] = [
                 'id_user' => $user->id_user,
                 'tahun_diperoleh' => rand(2018, 2023),
@@ -27,9 +28,12 @@ class PSertifikasiSeeder extends Seeder
                 'nomor_sertifikat' => 'SKB-' . rand(1000, 9999),
 
                 'masa_berlaku' => rand(1, 5) . ' Tahun',
-                'status' => ['tervalidasi', 'perlu validasi', 'tidak valid'][rand(0, 2)],
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => null,
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -42,11 +46,14 @@ class PSertifikasiSeeder extends Seeder
 
                 // Key - Nomor Sertifikat tidak boleh sama
                 'nomor_sertifikat' => 'SKK-' . rand(1000, 9999),
-                
+
                 'masa_berlaku' => rand(1, 3) . ' Tahun',
-                'status' => ['tervalidasi', 'perlu validasi', 'tidak valid'][rand(0, 2)],
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => null,
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

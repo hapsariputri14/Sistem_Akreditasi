@@ -17,6 +17,7 @@ class PKaryaBukuSeeder extends Seeder
             ->get();
 
         foreach ($dosenUsers as $user) {
+            $sumber_data = ['p3m', 'dosen'][rand(0, 1)];
             $karyaBukus[] = [
                 'id_user' => $user->id_user,
 
@@ -27,9 +28,12 @@ class PKaryaBukuSeeder extends Seeder
                 'jumlah_halaman' => rand(100, 300),
                 'penerbit' => 'Penerbit ' . $user->id_user,
                 'isbn' => 'ISBN-' . rand(800000, 999999),
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -39,14 +43,17 @@ class PKaryaBukuSeeder extends Seeder
 
                 // Key - Judul buku tidak boleh sama
                 'judul_buku' => 'Modul Pembelajaran ' . $user->id_user,
-                
+
                 'tahun' => rand(2015, 2020),
                 'jumlah_halaman' => rand(50, 150),
                 'penerbit' => 'Penerbit ' . ($user->id_user + 1),
                 'isbn' => 'ISBN-' . rand(700000, 899999),
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

@@ -18,6 +18,7 @@ class PPrestasiSeeder extends Seeder
             ->get();
 
         foreach ($dosenUsers as $user) {
+            $sumber_data = ['p3m', 'dosen'][rand(0, 1)];
             $prestasis[] = [
                 'id_user' => $user->id_user,
 
@@ -26,9 +27,12 @@ class PPrestasiSeeder extends Seeder
 
                 'waktu_pencapaian' => date('Y-m-d', strtotime('-' . rand(1, 12) . ' months')),
                 'tingkat' => $tingkat[array_rand($tingkat)],
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -38,12 +42,15 @@ class PPrestasiSeeder extends Seeder
 
                 // Key - Prestasi tidak boleh sama
                 'prestasi_yang_dicapai' => 'Juara ' . $user->id_user . ' Lomba Inovasi Pembelajaran',
-                
+
                 'waktu_pencapaian' => date('Y-m-d', strtotime('-' . rand(1, 12) . ' months')),
                 'tingkat' => $tingkat[array_rand($tingkat)],
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

@@ -18,6 +18,7 @@ class POrganisasiSeeder extends Seeder
             ->get();
 
         foreach ($dosenUsers as $user) {
+            $sumber_data = ['p3m', 'dosen'][rand(0, 1)];
             $organisasis[] = [
                 'id_user' => $user->id_user,
 
@@ -26,9 +27,12 @@ class POrganisasiSeeder extends Seeder
 
                 'kurun_waktu' => (rand(2015, 2018)) . '-Sekarang',
                 'tingkat' => $tingkat[array_rand($tingkat)],
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -38,12 +42,15 @@ class POrganisasiSeeder extends Seeder
 
                 // Key - Nama organisasi tidak boleh sama
                 'nama_organisasi' => 'Ikatan Dosen ' . $user->id_user,
-                
+
                 'kurun_waktu' => (rand(2018, 2020)) . '-Sekarang',
                 'tingkat' => $tingkat[array_rand($tingkat)],
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

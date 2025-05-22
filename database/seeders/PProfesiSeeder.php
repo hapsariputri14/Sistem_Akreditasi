@@ -17,15 +17,19 @@ class PProfesiSeeder extends Seeder
             ->get();
 
         foreach ($dosenUsers as $user) {
+            $sumber_data = ['p3m', 'dosen'][rand(0, 1)];
             $profesis[] = [
                 'id_user' => $user->id_user,
                 'perguruan_tinggi' => 'Universitas ' . $user->id_user,
                 'kurun_waktu' => (rand(2000, 2005)) . '-' . (rand(2006, 2010)),
                 'gelar' => 'Sarjana',
                 'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
-                'created_at' => now(),
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'updated_at' => now(),
             ];
 
@@ -35,9 +39,12 @@ class PProfesiSeeder extends Seeder
                 'kurun_waktu' => (rand(2005, 2010)) . '-' . (rand(2011, 2015)),
                 'gelar' => 'Magister',
                 'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
-                'created_at' => now(),
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'updated_at' => now(),
             ];
         }

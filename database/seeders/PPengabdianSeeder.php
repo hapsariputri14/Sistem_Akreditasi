@@ -18,6 +18,7 @@ class PPengabdianSeeder extends Seeder
             ->get();
 
         foreach ($dosenUsers as $user) {
+            $sumber_data = ['p3m', 'dosen'][rand(0, 1)];
             $pengabdians[] = [
                 'id_user' => $user->id_user,
 
@@ -29,9 +30,12 @@ class PPengabdianSeeder extends Seeder
                 'dana' => rand(3000000, 10000000),
                 'peran' => (rand(0, 1) ? 'ketua' : 'anggota'),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -47,9 +51,12 @@ class PPengabdianSeeder extends Seeder
                 'dana' => rand(2000000, 8000000),
                 'peran' => (rand(0, 1) ? 'ketua' : 'anggota'),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

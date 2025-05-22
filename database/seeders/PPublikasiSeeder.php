@@ -18,6 +18,7 @@ class PPublikasiSeeder extends Seeder
             ->get();
 
         foreach ($dosenUsers as $user) {
+            $sumber_data = ['p3m', 'dosen'][rand(0, 1)];
             $publikasis[] = [
                 'id_user' => $user->id_user,
 
@@ -29,9 +30,12 @@ class PPublikasiSeeder extends Seeder
                 'jenis_publikasi' => $jenis_publikasi[array_rand($jenis_publikasi)],
                 'dana' => rand(1000000, 5000000),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -41,15 +45,18 @@ class PPublikasiSeeder extends Seeder
 
                 // Key - Judul tidak boleh sama
                 'judul' => 'Studi Kasus ' . $user->id_user,
-                
+
                 'tempat_publikasi' => 'Konferensi Nasional ' . $user->id_user,
                 'tahun_publikasi' => rand(2015, 2020),
                 'jenis_publikasi' => $jenis_publikasi[array_rand($jenis_publikasi)],
                 'dana' => rand(500000, 3000000),
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

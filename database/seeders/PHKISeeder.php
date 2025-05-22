@@ -18,6 +18,7 @@ class PHKISeeder extends Seeder
             ->get();
 
         foreach ($dosenUsers as $user) {
+            $sumber_data = ['p3m', 'dosen'][rand(0, 1)];
             $hkis[] = [
                 'id_user' => $user->id_user,
                 'judul' => 'Inovasi ' . $user->id_user,
@@ -28,9 +29,12 @@ class PHKISeeder extends Seeder
                 'nomor' => 'HKI-' . rand(1000, 1999),
 
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -43,11 +47,14 @@ class PHKISeeder extends Seeder
 
                 // Key - Nomor tidak boleh sama
                 'nomor' => 'HKI-' . rand(2000, 2999),
-                
+
                 'melibatkan_mahasiswa_s2' => rand(0, 1),
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

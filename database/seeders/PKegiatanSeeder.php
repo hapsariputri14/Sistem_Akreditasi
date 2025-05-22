@@ -19,15 +19,19 @@ class PKegiatanSeeder extends Seeder
             ->get();
 
         foreach ($dosenUsers as $user) {
+            $sumber_data = ['p3m', 'dosen'][rand(0, 1)];
             $kegiatans[] = [
                 'id_user' => $user->id_user,
                 'jenis_kegiatan' => $jenis_kegiatan[array_rand($jenis_kegiatan)],
                 'tempat' => 'Universitas ' . $user->id_user,
                 'waktu' => date('Y-m-d', strtotime('-' . rand(1, 12) . ' months')),
                 'peran' => $peran[array_rand($peran)],
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -38,9 +42,12 @@ class PKegiatanSeeder extends Seeder
                 'tempat' => 'Kampus ' . ($user->id_user + 1),
                 'waktu' => date('Y-m-d', strtotime('-' . rand(1, 12) . ' months')),
                 'peran' => $peran[array_rand($peran)],
-                'status' => 'tervalidasi',
-                'sumber_data' => ['p3m', 'dosen'][rand(0, 1)],
-                'bukti' => 'contoh.pdf',
+
+                // Status sertifikasi tergantung pada sumber data
+                'status' => $sumber_data === 'dosen' ? 'tervalidasi' : ['perlu validasi', 'tidak valid'][rand(0, 1)],
+                'sumber_data' => $sumber_data,
+                'bukti' => $sumber_data === 'dosen' ? 'contoh.pdf' : 'Tidak ada file terkait',
+                
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
