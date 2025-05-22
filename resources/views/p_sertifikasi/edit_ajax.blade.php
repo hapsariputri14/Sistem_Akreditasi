@@ -7,6 +7,13 @@
         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
+        @if ($role === 'ADM')
+            <div class="mb-3">
+                <label for="nidn" class="form-label">NIDN</label>
+                <input type="text" class="form-control" id="nidn" name="nidn" required>
+                <div class="invalid-feedback" id="error_nidn"></div>
+            </div>
+        @endif
         <div class="mb-3">
             <label for="tahun_diperoleh" class="form-label">Tahun Diperoleh</label>
             <input type="number" class="form-control" id="tahun_diperoleh" name="tahun_diperoleh"
