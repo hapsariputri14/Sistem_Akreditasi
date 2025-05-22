@@ -82,10 +82,24 @@ class ProfileUserSeeder extends Seeder
         $jabatan = ['Asisten Ahli', 'Lektor', 'Lektor Kepala', 'Guru Besar'];
         $pangkat = ['III/a', 'III/b', 'III/c', 'IV/a', 'IV/b'];
 
+        // Daftar nama asli
+        $namaAsli = [
+            'Andi Setiawan',
+            'Rina Kurniawati',
+            'Budi Santoso',
+            'Dewi Lestari',
+            'Fajar Nugroho',
+            'Siti Nurhaliza',
+            'Agus Prasetyo',
+            'Nina Kartika',
+            'Joko Subagyo',
+            'Maya Wulandari'
+        ];
+
         for ($i = 1; $i <= 10; $i++) {
             DB::table('profile_user')->insert([
                 'id_user' => DB::table('user')->where('username', 'dosen' . $i)->first()->id_user,
-                'nama_lengkap' => 'Dosen ' . $i . ' ' . $gelar[array_rand($gelar)],
+                'nama_lengkap' => $namaAsli[$i - 1] . ' ' . $gelar[array_rand($gelar)],
                 'tempat_tanggal_lahir' => 'Kota, ' . rand(1, 28) . ' ' . ['Januari', 'Februari', 'Maret'][rand(0, 2)] . ' ' . rand(1970, 1985),
                 'nidn' => rand(1000000000, 9999999999),
                 'nip' => '19' . rand(70, 85) . rand(0, 9) . rand(0, 9) . '0101' . rand(1000, 9999),
