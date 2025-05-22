@@ -10,6 +10,10 @@
                 <td>{{ $sertifikasi->user->profile->nama_lengkap ?? '-' }}</td>
             </tr>
             <tr>
+                <th>NIDN</th>
+                <td>{{ optional($sertifikasi->user->profile)->nidn ?? '-' }}</td>
+            </tr>
+            <tr>
                 <th>Tahun Diperoleh</th>
                 <td>{{ $sertifikasi->tahun_diperoleh }}</td>
             </tr>
@@ -32,11 +36,12 @@
             <tr>
                 <th>Status</th>
                 <td>
-                    <span class="badge p-2 {{ [
-                        'tervalidasi' => 'badge-success',
-                        'tidak valid' => 'badge-danger',
-                        'perlu validasi' => 'badge-warning',
-                    ][$sertifikasi->status] ?? 'badge-success' }}">
+                    <span
+                        class="badge p-2 {{ [
+                            'tervalidasi' => 'badge-success',
+                            'tidak valid' => 'badge-danger',
+                            'perlu validasi' => 'badge-warning',
+                        ][$sertifikasi->status] ?? 'badge-success' }}">
                         {{ strtoupper($sertifikasi->status) }}
                     </span>
                 </td>
@@ -44,10 +49,11 @@
             <tr>
                 <th>Sumber Data</th>
                 <td>
-                    <span class="badge p-2 {{ [
-                        'p3m' => 'badge-primary',
-                        'dosen' => 'badge-secondary',
-                    ][$sertifikasi->sumber_data] ?? 'badge-primary' }}">
+                    <span
+                        class="badge p-2 {{ [
+                            'p3m' => 'badge-primary',
+                            'dosen' => 'badge-secondary',
+                        ][$sertifikasi->sumber_data] ?? 'badge-primary' }}">
                         {{ strtoupper($sertifikasi->sumber_data) }}
                     </span>
                 </td>
@@ -56,7 +62,8 @@
                 <th>Bukti</th>
                 <td>
                     @if ($sertifikasi->bukti)
-                        <a href="{{ asset('storage/p_sertifikasi/' . $sertifikasi->bukti) }}" target="_blank">Lihat File</a>
+                        <a href="{{ asset('storage/p_sertifikasi/' . $sertifikasi->bukti) }}" target="_blank">Lihat
+                            File</a>
                     @else
                         Tidak ada file
                     @endif

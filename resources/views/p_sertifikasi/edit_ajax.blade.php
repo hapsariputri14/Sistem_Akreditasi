@@ -1,5 +1,6 @@
 <form id="formEditSertifikasi" method="POST"
-    action="{{ route('p_sertifikasi.update_ajax', ['id' => $sertifikasi->id_sertifikasi]) }}" enctype="multipart/form-data">
+    action="{{ route('p_sertifikasi.update_ajax', ['id' => $sertifikasi->id_sertifikasi]) }}"
+    enctype="multipart/form-data">
     @csrf
     @method('PUT')
     <div class="modal-header bg-primary text-white">
@@ -10,7 +11,8 @@
         @if ($role === 'ADM')
             <div class="mb-3">
                 <label for="nidn" class="form-label">NIDN</label>
-                <input type="text" class="form-control" id="nidn" name="nidn" required>
+                <input type="text" class="form-control" id="nidn" name="nidn"
+                    value="{{ optional($sertifikasi->user->profile)->nidn }}" required>
                 <div class="invalid-feedback" id="error_nidn"></div>
             </div>
         @endif
@@ -46,12 +48,16 @@
         </div>
         <div class="mb-3">
             <label for="bukti" class="form-label">Bukti (PDF, JPG, PNG)</label>
-            <input type="file" class="form-control" id="bukti" name="bukti" accept=".pdf,.jpg,.jpeg,.png">
-            @if ($sertifikasi->bukti)
-                <small>File saat ini: <a href="{{ asset('storage/p_sertifikasi/' . $sertifikasi->bukti) }}"
-                        target="_blank">{{ $sertifikasi->bukti }}</a></small>
-            @endif
-            <div class="invalid-feedback" id="error_bukti"></div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label for="bukti" class="btn btn-info mb-0">Choose File</label>
+                </div>
+                <input type="file" class="form-control d-none" id="bukti" name="bukti"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onchange="document.getElementById('bukti_text').value = this.files[0]?.name || 'No file chosen'">
+                <input type="text" class="form-control" id="bukti_text" placeholder="No file chosen" readonly>
+                <div id="error_bukti" class="invalid-feedback"></div>
+            </div>
         </div>
     </div>
     <div class="modal-footer">
