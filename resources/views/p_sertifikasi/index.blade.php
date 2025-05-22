@@ -205,8 +205,7 @@
                                         title: xhr.responseJSON.alert === 'success' ?
                                             'Sukses' : 'Error',
                                         text: xhr.responseJSON.message,
-                                        timer: 2000,
-                                        showConfirmButton: false
+                                        showConfirmButton: true
                                     });
                                 } else {
                                     Swal.fire({

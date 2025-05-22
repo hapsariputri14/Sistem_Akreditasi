@@ -407,38 +407,40 @@ class PSertifikasiController extends Controller
             $skippedData = [];
             $errors = [];
 
-            $existingCertificates = PSertifikasiModel::pluck('nomor_sertifikat')->toArray();
-
-            /** @var \App\Models\UserModel|null $authUser */
-            $authUser = Auth::user();
-            $role = $authUser ? $authUser->getRole() : null;
+            /** @var UserModel|null $user */
+            $user = Auth::user();
+            $role = $user ? $user->getRole() : null;
+            $userNidn = DB::table('profile_user')->where('id_user', $user->id_user)->value('nidn');
 
             foreach ($data as $row => $values) {
-                if ($row == 1) continue; // Skip header
+                if ($row == 1) continue;
 
-                $nidn = trim($values['A']);
+                $nidn = trim($values['A']); // pastikan tidak ada ' di awal
+                $nomorSertifikat = trim($values['E']);
+
+                if ($role === 'DOS' && $nidn !== $userNidn) {
+                    $errors[] = "Baris $row: Anda hanya dapat mengimpor data dengan NIDN milik Anda ($userNidn).";
+                    continue;
+                }
+
                 $user = DB::table('profile_user')->where('nidn', $nidn)->first();
-
                 if (!$user) {
                     $errors[] = "Baris $row: NIDN $nidn tidak ditemukan di data profil user";
                     continue;
                 }
 
-                $id_user = $user->id_user;
-                $nomorSertifikat = trim($values['E']);
-
-                // Duplikat berdasarkan id_user dan nomor_sertifikat
-                $exists = PSertifikasiModel::where('id_user', $id_user)
+                // Cek duplikat kombinasi id_user dan nomor_sertifikat
+                $isDuplicate = PSertifikasiModel::where('id_user', $user->id_user)
                     ->where('nomor_sertifikat', $nomorSertifikat)
                     ->exists();
 
-                if ($exists) {
-                    $skippedData[] = "Baris $row: Sertifikasi dengan NIDN $nidn dan Nomor Sertifikat $nomorSertifikat sudah ada dan akan diabaikan";
+                if ($isDuplicate) {
+                    $skippedData[] = "Baris $row: Kombinasi NIDN $nidn dan Nomor Sertifikat $nomorSertifikat sudah ada.";
                     continue;
                 }
 
                 $validator = Validator::make([
-                    'id_user' => $id_user,
+                    'id_user' => $user->id_user,
                     'tahun_diperoleh' => $values['B'],
                     'penerbit' => $values['C'],
                     'nama_sertifikasi' => $values['D'],
@@ -458,26 +460,15 @@ class PSertifikasiController extends Controller
                     continue;
                 }
 
-                $status = 'perlu validasi';
-                $sumber_data = 'p3m';
-
-                if ($role === 'DOS') {
-                    $status = 'tervalidasi';
-                    $sumber_data = 'dosen';
-                } elseif ($role === 'ADM') {
-                    $status = 'perlu validasi';
-                    $sumber_data = 'p3m';
-                }
-
                 $insertData[] = [
-                    'id_user' => $id_user,
+                    'id_user' => $user->id_user,
                     'tahun_diperoleh' => $values['B'],
                     'penerbit' => $values['C'],
                     'nama_sertifikasi' => $values['D'],
                     'nomor_sertifikat' => $nomorSertifikat,
                     'masa_berlaku' => $values['F'],
-                    'status' => $status,
-                    'sumber_data' => $sumber_data,
+                    'status' => $role === 'DOS' ? 'Tervalidasi' : 'perlu validasi',
+                    'sumber_data' => $role === 'DOS' ? 'dosen' : 'p3m',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -489,34 +480,32 @@ class PSertifikasiController extends Controller
                 return response()->json([
                     'status' => false,
                     'alert' => 'error',
-                    'message' => 'Tidak ada data baru yang valid untuk diimport',
-                    'info' => $allMessages
+                    'message' => 'Tidak ada data baru yang valid untuk diimport:' .
+                        "\n" . implode("\n", array_slice($allMessages, 0, 1)) .
+                        (count($allMessages) > 3 ? "\n...dan " . (count($allMessages) - 3) . " lainnya." : ''),
+                    'showConfirmButton' => true
                 ], 422);
             }
 
-            $insertedCount = PSertifikasiModel::insertOrIgnore($insertData);
+            $insertedCount = PSertifikasiModel::insert($insertData);
 
-            $response = [
+            return response()->json([
                 'status' => true,
                 'alert' => 'success',
                 'message' => 'Import data berhasil',
                 'inserted_count' => $insertedCount,
                 'skipped_count' => count($skippedData),
-                'info' => $allMessages
-            ];
-
-            if (!empty($errors)) {
-                $response['error_count'] = count($errors);
-            }
-
-            return response()->json($response, 200, ['Content-Type' => 'application/json']);
+                'info' => $allMessages,
+                'error_count' => count($errors)
+            ]);
         } catch (\Exception $e) {
             Log::error('Import error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
             return response()->json([
                 'status' => false,
                 'alert' => 'error',
                 'message' => 'Terjadi kesalahan saat memproses file',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'showConfirmButton' => true
             ], 500);
         }
     }
